@@ -26,15 +26,13 @@ class Config(object):
         SQLALCHEMY_TRACK_MODIFICATIONS = False
     elif os.environ.get('DB_TYPE') == 'mariadb':
         print('SELECTED DB: MDB')
-        #SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI_PROD')
-        #SQLALCHEMY_TRACK_MODIFICATIONS = False
         print(os.environ.get('PRODUCTION'))
 
-        if os.environ.get('PRODUCTION') and os.environ.get('PRDUCTION') == 'PROD':
+        if os.environ.get('PRODUCTION') and os.environ.get('PRODUCTION') == 'PROD':
             print("Production database in use!")
-            SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI_PROD')
+            SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI')
             SQLALCHEMY_TRACK_MODIFICATIONS = False
         else:
             print("Development database in use!")
-            SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI_DEV')
+            SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI')
             SQLALCHEMY_TRACK_MODIFICATIONS = False
