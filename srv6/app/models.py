@@ -13,7 +13,7 @@ def load_user(id):
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False)
-    email = db.Column(db.String(), nullable=False, default=secret.dump('nomail@all'))  #enc
+    email = db.Column(db.String(), nullable=False, default=secret.dump('nomail@all'))  # enc
     password_hash = db.Column(db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
     settings = db.Column(db.String(), nullable=False, default='{}')
@@ -40,6 +40,16 @@ class Users(UserMixin, db.Model):
         else:
             return False
 
+    '''
+    def setAPIkey(self, key):
+        self.APIkey = key
+        return True
+    '''
+
+    def get_self(self):
+        return json.dumps({'ID': self.id, 'username': self.username, 'APIkey': self.APIkey,
+                           'created': self.created.strftime("%m/%d/%Y, %H:%M:%S"), 'is superuser': self.is_superuser})
+
     def get_self_json(self):
         return {
             'id': self.id,
@@ -53,8 +63,7 @@ class Users(UserMixin, db.Model):
         }
 
     def get_self_json_enc(self):
-        try:
-            return {
+        return {
             'id': self.id,
             'username': self.username,
             'email': str(secret.load(self.email)),
@@ -63,10 +72,7 @@ class Users(UserMixin, db.Model):
             'last_modified_at': self.last_modified_at.strftime("%m/%d/%Y, %H:%M:%S"),
             'is_superuser': self.is_superuser,
             'is_enabled': self.is_enabled
-            }
-        except:
-            print('ERROR IN SECRET!')
-            return 'NO MAIL'
+        }
 
 
 class Testbatteries(db.Model):
@@ -93,8 +99,7 @@ class Testbatteries(db.Model):
             'created_at': self.created_at.strftime("%m/%d/%Y, %H:%M:%S"),
             'last_modified_at': self.last_modified_at.strftime("%m/%d/%Y, %H:%M:%S"),
             'user_id': self.user_id,
-            'requirements': self.requirements,
-            'est_time': self.est_time
+            'requirements': self.requirements
         }
 
 
@@ -108,7 +113,7 @@ class Surveys(db.Model):
     is_archived = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
-    email_body = db.Column(db.String(), nullable=True)  #enc
+    email_body = db.Column(db.String(), nullable=True)  # enc
     testbattery_id = db.Column(db.Integer, db.ForeignKey('testbatteries.id'))
 
     def __repr__(self):
@@ -171,8 +176,8 @@ class Results(db.Model):
 class Clients(db.Model):
 
     id = db.Column(db.Integer, index=True, primary_key=True)
-    name = db.Column(db.String(), nullable=False)  #enc
-    email = db.Column(db.String(), default=secret.dump('nomail@all'))  #enc
+    name = db.Column(db.String(), nullable=False)  # enc
+    email = db.Column(db.String(), default=secret.dump('nomail@all'))  # enc
     is_archived = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
@@ -224,4 +229,3 @@ class Tokens(db.Model):
             'client_id': self.client_id,
             'survey_id': self.survey_id
         }
-
