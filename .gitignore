@@ -3,3 +3,4 @@
 /srv6/.env
 /srv6/log/log.file
 /srv6/log/log_archive.zip
+/migrations/
