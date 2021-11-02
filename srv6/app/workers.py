@@ -60,32 +60,26 @@ def get_admindata():
     for user in Users.query.all():
         #print(user.get_self_json_enc())
         data['users'].append(user.get_self_json_enc())
-    print('Users collected!')
 
     data['testbatteries'] = []
     for testbattery in Testbatteries.query.all():
         data['testbatteries'].append(testbattery.get_self_json())
-    print('Batteries collected!')
 
     data['surveys'] = []
     for survey in Surveys.query.all():
         data['surveys'].append(survey.get_self_json_enc())
-    print('Surveys collected!')
 
     data['results'] = []
     for result in Results.query.all():
         data['results'].append(result.get_self_json())
-    print('Results collected!')
 
     data['clients'] = []
     for client in Clients.query.all():
         data['clients'].append(client.get_self_json_enc())
-    print('Clients collected!')
 
     data['tokens'] = []
     for token in Tokens.query.all():
         data['tokens'].append(token.get_self_json())
-    print('Tokens collected!')
 
     return json.dumps(data)
 
@@ -168,7 +162,6 @@ def del_survey(data):
 def add_client(data):
     survey = Surveys.query.get(int(data['survey_id']))
     if survey.is_anonymus:
-        print('Survey is anonymus!')
         return False
     try:
         result = Results()

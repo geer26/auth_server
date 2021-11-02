@@ -37,7 +37,6 @@ class Healthcheck(Resource):
         else:
             username = 'ANONYMUS'
 
-        print(username)
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
         return {'status': 'healthy'}
 
@@ -52,7 +51,7 @@ class Admindata(Resource):
 
         if not current_user.is_authenticated or not current_user or not current_user.is_superuser:
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
-            return {'error_code': 2, 'message': 'Authentication required!'}, 401
+            return {'status': 2, 'message': 'Authentication required!'}, 401
         try:
             data = json.loads(get_admindata())
         except:
