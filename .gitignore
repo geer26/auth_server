@@ -1,2 +1,3 @@
 /venv
+/.flaskenv
 /srv6/.env
