@@ -1,0 +1,51 @@
+<div id="adduser_back" class="modalback" data-id="" style="display: none;">
+
+  <div class="modal">
+
+    <div class="closebutton" onclick="$('#adduser_back').hide();">
+      <i class="small material-icons">close</i>
+    </div>
+
+    <h3><b style="font-size: .5em;">FELHASZNÁLÓ HOZZÁADÁSA</b></h3>
+
+    <h6 class="error" id="adduser_error"> errormessage </h6>
+
+    <form>
+
+      <div class="input-field col">
+        <label for="adduser_username" style="color: black;">Felhasználónév</label>
+        <input type="text" id="adduser_username" class="validate" onkeyup="hide_error();">
+      </div>
+
+      <div class="input-field col">
+        <label for="adduser_pw1" style="color: black;">Jelszó</label>
+        <input type="password" id="adduser_pw1" class="validate" onkeyup="hide_error();">
+      </div>
+
+      <div class="input-field col">
+        <label for="adduser_pw2" style="color: black;">Jelszó mégegyszer</label>
+        <input type="password" id="adduser_pw2" class="validate" onkeyup="hide_error();">
+      </div>
+
+      <div class="input-field col">
+        <label for="adduser_email" style="color: black;">Email cím</label>
+        <input type="email" id="adduser_email" class="validate" onkeyup="hide_error();">
+      </div>
+
+      <label>
+        <input type="checkbox" id="adduser_isactive" name="user_active" class="filled-in" checked/>
+        <span style="color: black; font-weight: normal; margin: auto;" >Aktív</span>
+      </label>
+
+      <label>
+        <input type="checkbox" id="adduser_issuperuser" name="user_active" class="filled-in"/>
+        <span style="color: black; font-weight: normal; margin: auto;" >Admin</span>
+      </label>
+
+    </form>
+
+    <a class="waves-effect waves-light btn-large" style="margin-top: 15px;" onclick="add_user();">HOZZÁADÁS</a>
+
+  </div>
+
+</div>

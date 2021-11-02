@@ -1,0 +1,35 @@
+<div id="modalback" class="modalback" data-target="loginmodal" style="display: none;">
+
+  <div id="loginmodal" class="modal">
+
+    <div class="closebutton" onclick="hide_all();">
+      <i class="small material-icons">close</i>
+    </div>
+
+    <h3><b>BELÉPÉS</b></h3>
+    <h6 id="errormessage" class="error"> errormessage </h6>
+
+    <form>
+
+      <div class="input-field col">
+        <label for="username" style="color: black;">Felhasználónév</label>
+        <input type="text" id="username" class="validate" onkeyup="hide_error();">
+      </div>
+
+      <div class="input-field col">
+        <label for="password" style="color: black;">Jelszó</label>
+        <input type="password" id="password" class="validate" onkeyup="hide_error();">
+      </div>
+
+      <label>
+        <input type="checkbox" id="remember_me" name="remember_me" class="filled-in"/>
+        <span style="color: black; font-weight: normal; margin: auto;" >Maradjak beléptetve</span>
+      </label>
+
+    </form>
+
+    <a class="waves-effect waves-light btn-large" onclick="press_login();">BELÉPÉS</a>
+
+  </div>
+
+</div>

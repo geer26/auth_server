@@ -1,0 +1,73 @@
+<div class="admin_chunk-hidden adm" id="users">
+
+
+    <div class="menu-chunk">
+
+       <div class="usermenu-icon blue" style="margin-right: 2px;">
+           <i class="material-icons blue" style="color: white; margin: auto;" onclick="show_adduser_modal();">add_circle_outline</i>
+       </div>
+
+        <div class="usermenu-icon orange" style="margin-right: 2px;">
+           <i class="material-icons orange" style="color: white; margin: auto;">sync</i>
+       </div>
+
+        Felhasználók
+
+    </div>
+
+    {% for user in data['users'] %}
+        <div class="user-chunk" >
+            <div class="user-menubar">
+
+                <div class="user-menubar-status">
+                    {% if user.is_enabled and user.is_superuser %}
+                     <i class="material-icons amber ico">alternate_email</i>
+                    {% elif user.is_enabled and not user.is_superuser %}
+                    <i class="material-icons green ico">person</i>
+                    {% elif not user.is_enabled and user.is_superuser %}
+                    <i class="material-icons red ico">alternate_email</i>
+                    {% elif not user.is_enabled and not user.is_superuser %}
+                    <i class="material-icons red ico">person</i>
+                    {% endif %}
+                </div>
+
+                <div class="user-menubar-name">
+                    <p>{{user.username}}</p>
+                </div>
+
+                <div class="user-menubar-action">
+
+                    <i class="material-icons amber action-ico" onclick="show_chpw({{user.id}});">password</i>
+
+                    {% if current_user.username != user.username %}
+                    <i class="material-icons red action-ico" onclick="delete_user({{user.id}})">delete</i>
+                    {% endif %}
+
+                    <i class="material-icons blue action-ico" onclick="show_user_details({{user.id}}, this)" id="expand-{{user.id}}">expand_more</i>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="user-detail user-detail-hidden" id="user-{{user.id}}">
+            <p> ID: {{user.id}}</p>
+            <p> Email: {{user.email}}</p>
+            <p> Beállítások: {{user.settings}}</p>
+            <p> Regisztráció: {{user.created_at}}</p>
+            <p> Utoljára módosítva: {{user.last_modified_at}}</p>
+            {% if user.is_enabled and user.username != current_user.username %}
+            <label>
+                <input type="checkbox" id="user_active" name="user_active" class="filled-in" checked onchange="change_enable({{user.id}})"/>
+                <span style="color: black; font-weight: normal; margin: auto;" >Aktív</span>
+            </label>
+            {% elif not user.is_enabled and user.username != current_user.username %}
+            <label>
+                <input type="checkbox" id="user_active" name="user_active" class="filled-in" onchange="change_enable({{user.id}})"/>
+                <span style="color: black; font-weight: normal; margin: auto;" >Aktív</span>
+            </label>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+</div>

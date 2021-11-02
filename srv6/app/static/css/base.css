@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'roboto';
+    src: url('/static/fonts/Roboto-Regular.ttf');
+}
+
+*{
+    font-family: roboto;
+}
+
+body{
+
+    background-image: url('/static/img/admin_back.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    padding: 0;
+    margin: 0;
+
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}

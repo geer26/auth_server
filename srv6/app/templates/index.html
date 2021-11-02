@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="/static/css/modals.css">
+<script src="/static/js/modals.js"></script>
+{% endblock %}
+
+{% block body %}
+
+<div class="maincontent">
+
+    {% include '/modals/loginmodal.html' %}
+    
+    <img src="/static/img/logo_large.png" class="anim">
+
+    <h4>
+        <a onclick="show_login()" style="cursor: pointer;">LOGIN</a>
+    </h4>
+
+</div>
+
+{% endblock %}

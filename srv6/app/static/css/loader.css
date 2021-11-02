@@ -1,0 +1,114 @@
+.loader-back{
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+.visible-loader{
+    display: flex;
+}
+
+.hidden-loader{
+    display: none;
+}
+
+        .loader-front{
+            height:400px;
+            width: 400px;
+            //border: 2px solid red;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .loader-barholder{
+            background: linear-gradient(0deg, rgba(255,0,0,0) 10%, rgba(196, 129, 20, 1) 50%, rgba(255,0,10,0) 90%);
+            //box-shadow: 2px 2px 3px 2px rgba(0,0,0,0.75);
+            width: 15%;
+            height: 100%;
+            margin: 3px;
+            border-radius: 5px;
+            animation: lanim 1.5s infinite linear;
+        }
+
+        @keyframes lanim{
+            0%{
+                height: 0;
+            }
+            12.5%{
+                height: 25%;
+            }
+            25%{
+                height: 50%;
+            }
+            37.5%{
+                height: 75%;
+            }
+            50%{
+                height: 100%;
+            }
+            62.5%{
+                height: 75%;
+            }
+            75%{
+                height: 50%;
+            }
+            97.5%{
+                height: 25%;
+            }
+            100%{
+                height: 0;
+            }
+
+        }
+
+        #load-bar1{
+            animation-delay: 0s;
+        }
+
+        #load-bar2{
+            animation-delay: -.1S;
+        }
+
+        #load-bar3{
+            animation-delay: -.2s;
+        }
+
+        #load-bar4{
+            animation-delay: -.3s;
+        }
+
+        #load-bar5{
+            animation-delay: -.4s;
+        }
+
+        #load-bar6{
+            animation-delay: -.5s;
+        }
+
+        #load-bar7{
+            animation-delay: -.6s;
+        }
+
+        #load-bar8{
+            animation-delay: -.7s;
+        }
+
+        #load-bar9{
+            animation-delay: -.8s;
+        }
+
+        #load-bar10{
+            animation-delay: -.9s;
+        }

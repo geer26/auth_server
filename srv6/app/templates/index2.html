@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="/static/css/modals.css">
+<script src="/static/js/simpleparallax.js"></script>
+<script src="/static/js/modals.js"></script>
+<script src="/static/js/index.js" defer></script>
+{% endblock %}
+
+{% block body %}
+
+{% include '/modals/loginmodal.html' %}
+
+    <div class="header" id="header">
+
+        <div class="logoarea">
+            <img src="/static/img/logo_large_2.png" style="height: 100%;" id="logoimg">
+            <img src="/static/img/logo_4.png" style="height: 100%;" id="narrowlogo">
+        </div>
+
+        <div class="menuarea">
+            <i class="material-icons nav-icon menuicon" onclick="show_login()">login</i>
+        </div>
+        </div>
+
+<div class="maincontent" id="mc">
+
+    <div class="main" id="main">
+
+        <div class="content-container">
+
+            <div>
+            <img src="/static/img/indeximages/6.jpg" class="pimage">
+            </div>
+
+            <h2> HEADER 1 </h2>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id pharetra arcu. Sed quam nibh, aliquam ornare massa vel, tempor sagittis risus. Cras lobortis sodales tempor. In quis sodales dui. Donec cursus diam at odio tincidunt sodales. Phasellus id luctus nibh. Praesent id mi egestas velit dictum hendrerit.
+            </p>
+
+            <div>
+            <img src="/static/img/indeximages/2.jpg" class="pimage">
+            </div>
+
+            <h2> HEADER 2 </h2>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id pharetra arcu. Sed quam nibh, aliquam ornare massa vel, tempor sagittis risus. Cras lobortis sodales tempor. In quis sodales dui. Donec cursus diam at odio tincidunt sodales. Phasellus id luctus nibh. Praesent id mi egestas velit dictum hendrerit.
+            </p>
+
+            <div>
+            <img src="/static/img/indeximages/5.jpg" class="pimage">
+            </div>
+
+            <h2> HEADER 3 </h2>
+
+            <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id pharetra arcu. Sed quam nibh, aliquam ornare massa vel, tempor sagittis risus. Cras lobortis sodales tempor. In quis sodales dui. Donec cursus diam at odio tincidunt sodales. Phasellus id luctus nibh. Praesent id mi egestas velit dictum hendrerit.
+            </p>
+
+            <div>
+            <img src="/static/img/indeximages/3.jpg" class="pimage">
+            </div>
+
+
+        </div>
+
+        <div class="footer">
+            CONTACT
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

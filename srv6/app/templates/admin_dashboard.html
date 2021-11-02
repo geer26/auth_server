@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="/static/css/admin.css">
+<script src="/static/js/admin.js"></script>
+{% endblock %}
+
+{% block body %}
+
+{% include '/modals/chpw_modal.html' %}
+{% include '/modals/adduser_modal.html' %}
+
+<div class="maincontent" class="maincontent">
+
+    <div class="header">
+
+        <img class="logo" src="/static/img/logo_2.png">
+
+        <ul>
+            <li class="menuitem men" data-target="users" onclick="show_tab(this);">
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">people</i>
+                    <span> Felhasználók </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" data-target="clients" onclick="show_tab(this);">
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">perm_contact_calendar</i>
+                    <span> Kliensek </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" data-target="testbatteries" onclick="show_tab(this);">
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">quiz</i>
+                    <span> Tesztcsomagok </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" data-target="surveys" onclick="show_tab(this);">
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">poll</i>
+                    <span> Felmérések </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" data-target="results" onclick="show_tab(this);">
+                <p class="menutitle" >
+                    <i class="material-icons nav-icon red">fact_check</i>
+                    <span> Eredmények </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" data-target="tokens" onclick="show_tab(this);">
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">token</i>
+                    <span> Tokenek </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" data-target="logs" onclick="show_tab(this);">
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">menu_book</i>
+                    <span> Naplók </span>
+                </p>
+            </li>
+
+            <li class="menuitem men" onclick="location.href='/logout'" >
+                <p class="menutitle">
+                    <i class="material-icons nav-icon red">logout</i>
+                    <span> Kilépés </span>
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main" id="main">
+    </div>
+
+</div>
+
+<script>
+    get_admindata();
+</script>
+
+{% endblock %}

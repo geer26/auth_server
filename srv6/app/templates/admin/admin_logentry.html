@@ -1,0 +1,24 @@
+
+{% for entry in logs|reverse %}
+  {% if entry.type == 'INFO' %}
+    <p style="background-color: rgba(174, 255, 107, .6);">
+      {{entry}}
+    </p>
+  {% elif entry.type == 'WARNING' %}
+    <p style="background-color: rgba(255, 255, 97, .6);">
+      {{entry}}
+    </p>
+  {% elif entry.type == 'ERROR' %}
+    <p style="background-color: rgba(255, 129, 51 .6);">
+      {{entry}}
+    </p>
+  {% elif entry.type == 'FATAL ERROR' %}
+    <p style="background-color: rgba(255, 0, 0, .6);">
+      {{entry}}
+    </p>
+  {% elif entry.type == 'SYSTEM EVENT' %}
+    <p style="background-color: rgba(105, 187, 255, .6);">
+      {{entry}}
+    </p>
+  {% endif %}
+{% endfor %}

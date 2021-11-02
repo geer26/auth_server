@@ -1,0 +1,24 @@
+<div class="admin_chunk-hidden adm" id="logs">
+
+    <div class="menu-chunk">
+
+        <a class="waves-effect waves-light btn-small" style="margin-right: 5px; border: 1px solid black; padding: 0; padding-left: 2px; padding-right: 2px;" onclick="download_current_log();">aktuális naplófile letöltése</a>
+
+        <a class="waves-effect waves-light btn-small" style="margin-right: 5px; border: 1px solid black; padding: 0; padding-left: 2px; padding-right: 2px;" onclick="download_archive_log();">archív naplófile letöltése</a>
+
+        Naplófile-ok
+
+        <a class="waves-effect waves-light btn-small" style="margin-right: 5px; border: 1px solid black; padding: 0; padding-left: 2px; padding-right: 2px; margin-left: 5px;">
+            <i class="material-icons" onclick="get_logs();">sync</i>
+        </a>
+
+        <a class="waves-effect waves-light btn-small red" style="margin-right: 5px; border: 1px solid black; padding: 0; padding-left: 2px; padding-right: 2px; margin-left: 5px;">
+            <i class="material-icons red" onclick="change_key();">key</i>
+        </a>
+
+    </div>
+
+    <div class="log-viewer" id="log_viewer">
+    </div>
+
+</div>
