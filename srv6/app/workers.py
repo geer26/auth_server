@@ -21,6 +21,8 @@ def del_user(id):
 
     try:
         user = Users.query.get(int(id))
+        for tb in Testbatteries.query.filter_by(user_id=user.id).all():
+            del_battery({'tbid':tb.id})
     except:
         return False
 
@@ -139,6 +141,14 @@ def add_survey(data):
         survey.is_active = data['is_active']
         survey.email_body = secret.dump(data['email_body'])
         survey.testbattery_id = int(data['tbid'])
+        if survey.is_anonymus:
+            token = Tokens()
+            token.survey_id = survey.id
+            token.client_id = 0
+            result = Results()
+            result.survey_id = survey.id
+            db.session.add(token)
+            db.session.add(token)
         db.session.add(survey)
         db.session.commit()
     except:
@@ -152,6 +162,11 @@ def del_survey(data):
         if not survey.is_anonymus:
             for client in Clients.query.filter_by(survey_id=survey.id).all():
                 del_client({'cid':client.id})
+        else:
+            for token in Tokens.query.filter_by(survey_id=survey.id).all():
+                db.session.delete(token)
+            for result in Results.query.filter_by(survey_id=survey.id).all():
+                db.session.delete(result)
         db.session.delete(survey)
         db.session.commit()
     except:
@@ -182,7 +197,7 @@ def add_client(data):
 
         token.client_id = client.id
         client.result_id = result.id
-        result.client_id = client.id
+        #result.client_id = client.id
         result.survey_id = survey.id
 
         db.session.commit()
@@ -199,6 +214,7 @@ def del_client(data):
             del_token({'tid':token.id})
         for result in Results.query.filter_by(client_id=client.id).all():
             del_result({'rid':result.id})
+
         db.session.delete(client)
         db.session.commit()
     except:
@@ -227,23 +243,5 @@ def del_result(data):
 
 
 def clean_database():
-    for user in Users.query.all():
-        if not user.is_superuser:
-            db.session.delete(user)
-            db.session.commit()
-    for battery in Testbatteries.query.all():
-        db.session.delete(battery())
-        db.session.commit()
-    for survey in Surveys.query.all():
-        db.session.delete(survey)
-        db.session.commit()
-    for client in Clients.query.all():
-        db.session.delete(client)
-        db.session.commit()
-    for result in Results.query.all():
-        db.session.delete(result)
-        db.session.commit()
-    for token in Tokens.query.all():
-        db.session.delete(token)
-        db.session.commit()
+
     return True

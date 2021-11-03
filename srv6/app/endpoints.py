@@ -574,10 +574,10 @@ class ClearData(Resource):
             return {'status': 2, 'message': 'Must be logged in as superuser!'}, 401
 
         if clean_database():
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log('Database wiped', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Database wiped!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
+            logger.upd_log('Database wipe refused!', request=request, type=3, user=username)
             return {'status': 1, 'message': 'Internal server error!'}, 500
 
 
