@@ -121,6 +121,7 @@ def add_battery(data):
 
 
 def del_battery(data):
+    print(f'USERID: {data}')
     try:
         battery = Testbatteries.query.get( int(data['tbid']) )
         for survey in Surveys.query.filter_by(testbattery_id=battery.id).all():
@@ -253,5 +254,22 @@ def del_result(data):
 
 
 def clean_database():
+
+    try:
+        for user in Users.query.all():
+            if not user.is_superuser:
+                print(user.id)
+                db.session.delete(user)
+                db.session.commit()
+                print('User deleted!')
+
+        for battery in Testbatteries.query.all():
+            print(battery.id)
+            del_battery({'tbid':battery.id})
+
+        db.session.commit()
+
+    except:
+        return False
 
     return True

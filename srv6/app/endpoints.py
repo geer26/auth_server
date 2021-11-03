@@ -171,7 +171,7 @@ class DelUser(Resource):
             return {'status': 0, 'message': 'User deleted succesfully!'}, 200
         else:
             logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 3, 'message': 'Internal server error!'}, 500
+            return {'status': 3, 'message': 'Delete user failed!'}, 500
 
 
 class DelUserHtml(Resource):
