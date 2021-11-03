@@ -143,12 +143,15 @@ def add_survey(data):
         survey.testbattery_id = int(data['tbid'])
         db.session.add(survey)
         db.session.commit()
+        '''
+        add_client({'survey_id':survey.id})
+        '''
         print(f'Survey is anonymus: {survey.is_anonymus}')
         if survey.is_anonymus:
             token = Tokens()
             print(f'Survey id: {survey.id}')
             token.survey_id = survey.id
-            token.client_id = 0
+            token.client_id = None
             print(f'TOKEN: {token.get_self_json()}')
             db.session.add(token)
             print('token added')
@@ -161,6 +164,7 @@ def add_survey(data):
             db.session.commit()
         #db.session.add(survey)
         #db.session.commit()
+
     except:
         return False
     return True
@@ -186,13 +190,40 @@ def del_survey(data):
 
 def add_client(data):
     survey = Surveys.query.get(int(data['survey_id']))
+
     if survey.is_anonymus:
-        return False
+        try:
+            result = Results()
+
+            token = Tokens()
+            token.survey_id = survey.id
+
+            client = Clients()
+            db.session.add(result)
+            db.session.add(token)
+            db.session.add(client)
+            client.name = secret.dump(f'AUTO CLIENT FOR {survey.id}')
+            client.email = secret.dump('NO EMAIL')
+            client.is_archived = False
+            client.survey_id = survey.id
+
+            db.session.commit()
+
+            token.client_id = client.id
+            client.result_id = result.id
+            # result.client_id = client.id
+            result.survey_id = survey.id
+
+            db.session.commit()
+
+        except:
+            return False
+
     try:
         result = Results()
 
         token = Tokens()
-        token.survey_id = int(data['survey_id'])
+        token.survey_id = survey.id
 
         client = Clients()
         db.session.add(result)
