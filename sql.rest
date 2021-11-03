@@ -11,11 +11,16 @@ content-type: application/json
 }
 
 
-### 2. Login
-#OK!
-#DC!
-#GET https://kecskecsecse.tk/API/login?username=superuser&password=123456aA&remember_me=false HTTP/1.1
-GET http://127.0.0.1:5001/API/login?username=superuser&password=123456aA&remember_me=false HTTP/1.1
+### 2. Login as post w JSON
+#POST https://kecskecsecse.tk/API/login HTTP/1.1
+POST http://127.0.0.1:5001/API/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "superuser",
+    "password": "123456aA",
+    "remember": false
+}
 
 
 ### 3. Add users
@@ -76,29 +81,29 @@ content-type: application/json
 ### 5. Add survey
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/addsurvey HTTP/1.1
-#POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
+#POST https://kecskecsecse.tk/API/addsurvey HTTP/1.1
+POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Másik névtelen felmérés",
+    "title": "Egy névtelen felmérés",
     "is_anonymus": true,
     "is_active": true,
     "is_archived": false,
     "email_body": "A köremail szövege",
-    "tbid": 1
+    "tbid": 3
 }
 
 
 ### 5. Del survey !!!OPTIONAL!!!
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/delsurvey HTTP/1.1
-#POST http://127.0.0.1:5001/API/delsurvey HTTP/1.1
+#POST https://kecskecsecse.tk/API/delsurvey HTTP/1.1
+POST http://127.0.0.1:5001/API/delsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "sid": 2
+    "sid": 17
 }
 
 
@@ -160,8 +165,8 @@ GET http://127.0.0.1:5001/API/wipedatabase HTTP/1.1
 
 ### 8. Logout user
 #OK!
-GET https://kecskecsecse.tk/logout HTTP/1.1
-#GET http://127.0.0.1:5001/logout HTTP/1.1
+#GET https://kecskecsecse.tk/logout HTTP/1.1
+GET http://127.0.0.1:5001/logout HTTP/1.1
 
 
 ### 10. Healthcheck

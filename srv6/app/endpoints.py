@@ -210,36 +210,39 @@ class DelUserHtml(Resource):
 
 
 class Login(Resource):
-    def get(self):
 
+    def post(self):
         if current_user.is_authenticated:
             username = current_user.username
         else:
             username = 'ANONYMUS'
 
-        if not request.args:
-            logger.upd_log('API endpoint serve refused', request=request, type=2, user=username)
-            return {'status': 4, 'message': 'API request must have params!'}, 400
+        json_data = request.get_json(force=True)
 
-        if not request.args['username'] or not request.args['password']:
+        if not json_data:
             logger.upd_log('API endpoint serve refused', request=request, type=2, user=username)
-            return {'status': 3, 'message': 'Username and password must be presented!'}, 400
+            return {'status': 4, 'message': 'LOGIN request must have params!'}, 400
 
-        username = request.args['username']
-        password = request.args['password']
+        if not json_data['username'] or not json_data['password']:
+            logger.upd_log('API endpoint serve refused', request=request, type=2, user=username)
+            return {'status': 3, 'message': 'Username and password must be presented for login!'}, 400
+
+        username = json_data['username']
+        password = json_data['password']
+        remember = json_data['remember']
 
         user = Users.query.filter_by(username=str(username)).one_or_none()
         if not user:
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
-            return {'status': 1, 'message': 'Login refused!'}, 401
+            return {'status': 1, 'message': 'Invalid username!'}, 401
         if not user.check_password(str(password)):
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
-            return {'status': 1, 'message': 'Login refused!'}, 401
+            return {'status': 1, 'message': 'Invalid password!'}, 401
         if not user.is_enabled:
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
-            return {'status': 1, 'message': 'Login refused!'}, 401
+            return {'status': 1, 'message': 'User is disabled!'}, 401
 
-        login_user(user, remember=request.args["remember_me"])
+        login_user(user, remember=remember)
 
         if user.is_superuser:
             logger.upd_log('API endpoint served', request=request, type=0, user=username)
@@ -280,6 +283,7 @@ class AdduserHtm(Resource):
             username = 'ANONYMUS'
 
         json_data = request.get_json(force=True)
+
 
         if not current_user.is_authenticated or not current_user.is_superuser:
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)

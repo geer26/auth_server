@@ -141,16 +141,26 @@ def add_survey(data):
         survey.is_active = data['is_active']
         survey.email_body = secret.dump(data['email_body'])
         survey.testbattery_id = int(data['tbid'])
-        if survey.is_anonymus:
-            token = Tokens()
-            token.survey_id = survey.id
-            token.client_id = 0
-            result = Results()
-            result.survey_id = survey.id
-            db.session.add(token)
-            db.session.add(token)
         db.session.add(survey)
         db.session.commit()
+        print(f'Survey is anonymus: {survey.is_anonymus}')
+        if survey.is_anonymus:
+            token = Tokens()
+            print(f'Survey id: {survey.id}')
+            token.survey_id = survey.id
+            token.client_id = 0
+            print(f'TOKEN: {token.get_self_json()}')
+            db.session.add(token)
+            print('token added')
+            db.session.commit()
+            print('token comitted')
+            result = Results()
+            result.survey_id = survey.id
+            print(f'RESULT: {result.get_self_json()}')
+            db.session.add(token)
+            db.session.commit()
+        #db.session.add(survey)
+        #db.session.commit()
     except:
         return False
     return True

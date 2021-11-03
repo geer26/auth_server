@@ -22,17 +22,18 @@ function press_login(){
         return;
     }
 
-    var data = {username: $('#username').val(), password: $('#password').val(), remember_me: $('#remember_me').prop('checked')};
+    var data = {username: $('#username').val(), password: $('#password').val(), remember: $('#remember_me').prop('checked')};
 
     show_loader();
 
     $.ajax({
             url: '/API/login',
-            data: data,
-            type: 'GET',
+            type: 'POST',
+            dataType: "json",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
 
             success: result => {
-                console.log(result);
                 hide_loader();
                 window.location.href = "/";
             },
