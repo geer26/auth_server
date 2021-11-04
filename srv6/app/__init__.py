@@ -6,7 +6,7 @@ from config import Config
 from fernet import Secret
 from flask_restful import Api
 from logger import Logger
-#from endpoints import HelloWorld
+from flask_cors import CORS
 
 
 app = Flask(__name__)
@@ -16,7 +16,9 @@ app.config.from_object(Config)
 
 
 api = Api(app)
-#api.add_resource(HelloWorld, '/API/helloworld')
+
+
+CORS(app)
 
 
 db = SQLAlchemy(app)
