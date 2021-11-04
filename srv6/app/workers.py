@@ -303,3 +303,17 @@ def clean_database():
         return False
 
     return True
+
+
+def upd_user(data, user):
+    print(data)
+    print(user)
+    try:
+        if data['email']:
+            user.email = secret.dump(data['email'])
+        if data['settings']:
+            user.settings = str(data['settings'])
+        db.session.commit()
+    except:
+        return False
+    return True

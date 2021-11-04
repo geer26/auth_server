@@ -13,10 +13,10 @@ def load_user(id):
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False)
-    email = db.Column(db.String(), nullable=False, default=secret.dump('nomail@all'))  # enc
+    email = db.Column(db.String(), nullable=False, default=secret.dump('nomail@all'))  # enc, updatable
     password_hash = db.Column(db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
-    settings = db.Column(db.String(), nullable=False, default='{}')
+    settings = db.Column(db.String(), nullable=False, default='{}')  #updatable
     created_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     is_superuser = db.Column(db.Boolean, nullable=False, default=False)

@@ -26,14 +26,14 @@ content-type: application/json
 ### 3. Add users
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/adduser HTTP/1.1
-#POST http://127.0.0.1:5001/API/adduser HTTP/1.1
+#POST https://kecskecsecse.tk/API/adduser HTTP/1.1
+POST http://127.0.0.1:5001/API/adduser HTTP/1.1
 content-type: application/json
 
 {
     "username": "kunbela",
     "password": "1234567aA",
-    "email": "kunbela@gmail.com",
+    "email": "kunbela@mail.com",
     "is_enabled": true,
     "is_superuser": false
 }
@@ -42,12 +42,24 @@ content-type: application/json
 ### 3. Delete user !!!OPTIONAL!!!
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/deluser HTTP/1.1
-#POST http://127.0.0.1:5001/API/deluser HTTP/1.1
+#POST https://kecskecsecse.tk/API/deluser HTTP/1.1
+POST http://127.0.0.1:5001/API/deluser HTTP/1.1
 content-type: application/json
 
 {
     "uid": 4
+}
+
+
+### 3/A. Update user !!!OPTIONAL!!!
+#POST https://kecskecsecse.tk/API/updateuser HTTP/1.1
+POST http://127.0.0.1:5001/API/updateuser HTTP/1.1
+content-type: application/json
+
+{
+    "uid": 4,
+    "email": "modified@mail.com",
+    "settings": "{modified!}"
 }
 
 
@@ -59,22 +71,22 @@ POST http://127.0.0.1:5001/API/addbattery HTTP/1.1
 Content-Type: application/json
 
 {
-    "short_name": "proba-battery",
-    "name": "Tesztcsomag, alapvető funkciók tesztelésére",
+    "short_name": "proba-battery 3.",
+    "name": "Tesztcsomag 3., alapvető funkciók tesztelésére",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    "user_id": 2
+    "user_id": 6
 }
 
 
 ### 4. Delete testbattery  !!!OPTIONAL!!!
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/delbattery HTTP/1.1
-#POST http://127.0.0.1:5001/API/delbattery HTTP/1.1
+#POST https://kecskecsecse.tk/API/delbattery HTTP/1.1
+POST http://127.0.0.1:5001/API/delbattery HTTP/1.1
 content-type: application/json
 
 {
-    "tbid": 2
+    "tbid": 4
 }
 
 
@@ -91,7 +103,7 @@ content-type: application/json
     "is_active": true,
     "is_archived": false,
     "email_body": "A köremail szövege",
-    "tbid": 3
+    "tbid": 5
 }
 
 
@@ -103,7 +115,7 @@ POST http://127.0.0.1:5001/API/delsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "sid": 17
+    "sid": 24
 }
 
 
@@ -115,39 +127,39 @@ POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Egy nevesített felmérés",
+    "title": "Egy nevesített felmérés - 2.",
     "is_anonymus": false,
     "is_active": true,
     "is_archived": false,
     "email_body": "A köremail szövege",
-    "tbid": 3
+    "tbid": 7
 }
 
 
 ### 6. Add client
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/addclient HTTP/1.1
-#POST http://127.0.0.1:5001/API/addclient HTTP/1.1
+#POST https://kecskecsecse.tk/API/addclient HTTP/1.1
+POST http://127.0.0.1:5001/API/addclient HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Béla",
-    "email": "bela@email.com",
+    "name": "Aladár",
+    "email": "aladar@email.com",
     "is_archived": false,
-    "survey_id": 3
+    "survey_id": 29
 }
 
 
 ### 6. Delete client !!!OPTIONAL!!!
 #OK!
 #DC!
-POST https://kecskecsecse.tk/API/delclient HTTP/1.1
-#POST http://127.0.0.1:5001/API/delclient HTTP/1.1
+#POST https://kecskecsecse.tk/API/delclient HTTP/1.1
+POST http://127.0.0.1:5001/API/delclient HTTP/1.1
 content-type: application/json
 
 {
-    "cid": 1
+    "cid": 7
 }
 
 

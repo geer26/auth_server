@@ -5,7 +5,7 @@ from flask import request, redirect, render_template, send_from_directory, send_
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
-    clean_database
+    clean_database, upd_user
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -543,20 +543,14 @@ class DelClient(Resource):
         json_data = request.get_json(force=True)
 
         if not current_user.is_authenticated:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log('Client delete refused!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in!'}, 401
 
         if del_client(json_data):
-            try:
-                data = json.loads(get_admindata())
-            except:
-                logger.upd_log('Internal server error', request=request, type=3, user=username)
-                return {'error_code': 1, 'message': 'Internal server error!'}, 500
-            #html = render_template('/admin/admin_container.html', data=data)
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'Client deleted!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Client deleted!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
+            logger.upd_log('Client delete failed!', request=request, type=3, user=username)
             return {'status': 1, 'message': 'Internal server error!'}, 500
 
 
@@ -577,6 +571,29 @@ class ClearData(Resource):
         else:
             logger.upd_log('Database wipe refused!', request=request, type=3, user=username)
             return {'status': 1, 'message': 'Internal server error!'}, 500
+
+
+class UpdateUser(Resource):
+    def post(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        json_data = request.get_json(force=True)
+        user = Users.query.get(int(json_data['uid']))
+        userid = user.id
+
+        if not current_user.is_authenticated or not current_user.is_superuser:
+            logger.upd_log('User update refused!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Must be logged in as admin!'}, 401
+
+        if upd_user(json_data, user):
+            logger.upd_log(f'User <{userid}> succesfully updated!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'User updated succesfully!'}, 200
+        else:
+            logger.upd_log(f'User <{userid}> update failed!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'User update failed!'}, 200
 
 
 
@@ -603,3 +620,4 @@ api.add_resource(DelSurvey, '/API/delsurvey')
 api.add_resource(AddClient, '/API/addclient')
 api.add_resource(DelClient, '/API/delclient')
 api.add_resource(ClearData, '/API/wipedatabase')
+api.add_resource(UpdateUser, '/API/updateuser')
