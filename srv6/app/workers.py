@@ -121,7 +121,6 @@ def add_battery(data):
 
 
 def del_battery(data):
-    print(f'USERID: {data}')
     try:
         battery = Testbatteries.query.get( int(data['tbid']) )
         for survey in Surveys.query.filter_by(testbattery_id=battery.id).all():
@@ -170,14 +169,14 @@ def add_survey(data):
 def del_survey(data):
     try:
         survey = Surveys.query.get(int(data['sid']))
-        if not survey.is_anonymus:
-            for client in Clients.query.filter_by(survey_id=survey.id).all():
-                del_client({'cid':client.id})
-        else:
-            for token in Tokens.query.filter_by(survey_id=survey.id).all():
-                db.session.delete(token)
-            for result in Results.query.filter_by(survey_id=survey.id).all():
-                db.session.delete(result)
+
+        for token in Tokens.query.filter_by(survey_id=survey.id).all():
+            del_token({'tid': token.id})
+        for client in Clients.query.filter_by(survey_id=survey.id).all():
+            del_client({'cid': client.id})
+        for result in Results.query.filter_by(survey_id=survey.id).all():
+            del_result({'rid': result.id})
+
         db.session.delete(survey)
         db.session.commit()
     except:
@@ -223,11 +222,10 @@ def del_client(data):
         client = Clients.query.get(int(data['cid']))
         for token in Tokens.query.filter_by(client_id=client.id).all():
             del_token({'tid':token.id})
-        for result in Results.query.filter_by(client_id=client.id).all():
-            del_result({'rid':result.id})
-
         db.session.delete(client)
         db.session.commit()
+        for result in Results.query.filter_by(client_id=client.id).all():
+            del_result({'rid':result.id})
     except:
         return False
     return True
@@ -245,8 +243,8 @@ def del_token(data):
 
 def del_result(data):
     try:
-        token = Tokens.query.get(int(data['rid']))
-        db.session.delete(token)
+        result = Results.query.get(int(data['rid']))
+        db.session.delete(result)
         db.session.commit()
     except:
         return False
@@ -256,18 +254,29 @@ def del_result(data):
 def clean_database():
 
     try:
-        for user in Users.query.all():
-            if not user.is_superuser:
-                print(user.id)
-                db.session.delete(user)
-                db.session.commit()
-                print('User deleted!')
+        #1. del all tokens
+        for token in Tokens.query.all():
+            del_token({'tid':token.id})
 
+        #2. del all clients
+        for client in Clients.query.all():
+            del_client({'cid':client.id})
+
+        #3. del all results
+        for result in Results.query.all():
+            del_result({'rid':result.id})
+
+        #4. del all surveys
+        for survey in Surveys.query.all():
+            del_survey({'sid':survey.id})
+
+        #5. del all testbatteries
         for battery in Testbatteries.query.all():
-            print(battery.id)
             del_battery({'tbid':battery.id})
 
-        db.session.commit()
+        #6. del all users except admins
+        for user in Users.query.all():
+            if not user.is_superuser: del_user(user.id)
 
     except:
         return False

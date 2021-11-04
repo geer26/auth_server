@@ -498,17 +498,11 @@ class DelSurvey(Resource):
             return {'status': 2, 'message': 'Must be logged in!'}, 401
 
         if del_survey(json_data):
-            try:
-                data = json.loads(get_admindata())
-            except:
-                logger.upd_log('Internal server error', request=request, type=3, user=username)
-                return {'error_code': 1, 'message': 'Internal server error!'}, 500
-            #html = render_template('/admin/admin_container.html', data=data)
             logger.upd_log('API endpoint served', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Survey deleted!'}, 200
         else:
             logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            return {'status': 1, 'message': 'Survey delete failed!!'}, 500
 
 
 class AddClient(Resource):
