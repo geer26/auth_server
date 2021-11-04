@@ -246,10 +246,10 @@ class Login(Resource):
 
         if user.is_superuser:
             logger.upd_log('API endpoint served', request=request, type=0, user=username)
-            return {"status": 0, 'message': 'OK!', "redirect_to": "/admin/"}, 200
+            return {"status": 0, 'message': 'OK!', "redirect_to": "/admin/", 'role': 'admin', 'username': str(user.username)}, 200
         else:
             logger.upd_log('API endpoint served', request=request, type=0, user=username)
-            return {"status": 0, 'message': 'OK!', "redirect_to": "/user/"}, 200
+            return {"status": 0, 'message': 'OK!', "redirect_to": "/user/", 'role': 'user', 'username': str(user.username)}, 200
 
 
 class GetlogAshtml(Resource):
