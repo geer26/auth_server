@@ -143,28 +143,16 @@ def add_survey(data):
         survey.testbattery_id = int(data['tbid'])
         db.session.add(survey)
         db.session.commit()
-        '''
-        add_client({'survey_id':survey.id})
-        '''
-        print(f'Survey is anonymus: {survey.is_anonymus}')
         if survey.is_anonymus:
-            token = Tokens()
-            print(f'Survey id: {survey.id}')
-            token.survey_id = survey.id
-            token.client_id = None
-            print(f'TOKEN: {token.get_self_json()}')
-            db.session.add(token)
-            print('token added')
-            db.session.commit()
-            print('token comitted')
             result = Results()
             result.survey_id = survey.id
-            print(f'RESULT: {result.get_self_json()}')
+            db.session.add(result)
+            db.session.commit()
+            token = Tokens()
+            token.survey_id = survey.id
+            token.client_id = None
             db.session.add(token)
             db.session.commit()
-        #db.session.add(survey)
-        #db.session.commit()
-
     except:
         return False
     return True
@@ -253,10 +241,12 @@ def del_client(data):
         client = Clients.query.get(int(data['cid']))
         for token in Tokens.query.filter_by(client_id=client.id).all():
             del_token({'tid':token.id})
+        temp_result_id = client.result_id
+        client.result_id = None
+        db.session.commit()
+        del_result({'rid':temp_result_id})
         db.session.delete(client)
         db.session.commit()
-        for result in Results.query.filter_by(client_id=client.id).all():
-            del_result({'rid':result.id})
     except:
         return False
     return True
