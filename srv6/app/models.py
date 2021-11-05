@@ -79,13 +79,13 @@ class Testbatteries(db.Model):
 
     id = db.Column(db.Integer, index=True, primary_key=True)
     short_name = db.Column(db.String(40), unique=True, nullable=False)
-    name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(255), nullable=False)  #upgradable
+    description = db.Column(db.String(), nullable=False)  #upgradable
     created_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    requirements = db.Column(db.String(), nullable=False, default='[]')
-    est_time = db.Column(db.String(64))
+    requirements = db.Column(db.String(), nullable=False, default='[]')  #upgradable
+    est_time = db.Column(db.String(64))  #upgradable
 
     def __repr__(self):
         return f'<name: {self.name}> <description: {self.description}>'

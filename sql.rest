@@ -52,14 +52,15 @@ content-type: application/json
 
 
 ### 3/A. Update user !!!OPTIONAL!!!
+# Mandatroy: uid, Optional: email, settings
 #POST https://kecskecsecse.tk/API/updateuser HTTP/1.1
 POST http://127.0.0.1:5001/API/updateuser HTTP/1.1
 content-type: application/json
 
 {
-    "uid": 4,
+    "uid": 6,
     "email": "modified@mail.com",
-    "settings": "{modified!}"
+    "settings": {"modified!": true}
 }
 
 

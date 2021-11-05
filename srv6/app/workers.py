@@ -306,13 +306,27 @@ def clean_database():
 
 
 def upd_user(data, user):
-    print(data)
-    print(user)
     try:
         if data['email']:
             user.email = secret.dump(data['email'])
+
         if data['settings']:
-            user.settings = str(data['settings'])
+            user.settings = json.dumps(data['settings'])
+
+        db.session.commit()
+    except:
+        return False
+    return True
+
+
+def upd_testbattery(data, testbattery):
+    try:
+        if data['email']:
+            testbattery.email = secret.dump(data['email'])
+
+        if data['settings']:
+            testbattery.settings = json.dumps(data['settings'])
+
         db.session.commit()
     except:
         return False
