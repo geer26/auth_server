@@ -320,10 +320,10 @@ def upd_user(data, user):
 
 
 def upd_testbattery(data, testbattery):
-    print(testbattery)
+    print(data)
     try:
         if data['name']:
-            testbattery.name = str(data['name']).encode(encoding='utf-8')
+            testbattery.name = str(data['name'])
         if data['description']:
             testbattery.description = data['description']
         if data['requirements']:
