@@ -88,6 +88,26 @@ def get_admindata():
     return d
 
 
+def get_relevant_data(user):
+
+    if user.is_superuser:
+        return get_admindata()
+
+    data = {}
+
+    data['users'] = Users.query.get(user.id).get_self_json_enc()
+
+    data['testbatteries'] = []
+    data['surveys'] = []
+    for testbattery in Testbatteries.query.filter_by(user_id=user.id).all():
+        data['testbatteries'].append(testbattery.get_self_json())
+        for survey in Surveys.query.filter_by(testbattery_id=testbattery.id).all():
+            data['surveys'].append(survey.get_self_json_enc())
+
+
+
+
+
 def change_key(username, request):
     new = secret.generate_key()
 
