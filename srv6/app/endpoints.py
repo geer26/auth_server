@@ -5,7 +5,7 @@ from flask import request, redirect, render_template, send_from_directory, send_
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
-    clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey
+    clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -615,7 +615,7 @@ class UpdateTestbattery(Resource):
             logger.upd_log(f'Testbattery <{testbattery.id}> succesfully updated!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Testbattery updated succesfully!'}, 200
         else:
-            logger.upd_log(f'User <{testbattery.id}> update failed!', request=request, type=0, user=username)
+            logger.upd_log(f'Testbattery <{testbattery.id}> update failed!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Testbattery update failed!'}, 500
 
 
@@ -636,11 +636,16 @@ class UpdateSurvey(Resource):
             return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
 
         if upd_survey(json_data, survey):
-            logger.upd_log(f'Testbattery <{testbattery.id}> succesfully updated!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'Testbattery updated succesfully!'}, 200
+            logger.upd_log(f'Survey <{survey.id}> succesfully updated!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Survey updated succesfully!'}, 200
         else:
-            logger.upd_log(f'User <{testbattery.id}> update failed!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'Testbattery update failed!'}, 500
+            logger.upd_log(f'Survey <{survey.id}> update failed!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Survey update failed!'}, 500
+
+
+class UpdateClient(Resource):
+    def post(self):
+        pass
 
 
 
@@ -669,3 +674,4 @@ api.add_resource(DelClient, '/API/delclient')
 api.add_resource(ClearData, '/API/wipedatabase')
 api.add_resource(UpdateUser, '/API/updateuser')
 api.add_resource(UpdateTestbattery, '/API/updatebattery')
+api.add_resource(UpdateClient, '/API/updateclient')

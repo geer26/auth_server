@@ -383,3 +383,11 @@ def upd_survey(data, survey):
     except:
         return False
     return True
+
+
+def upd_client(data, client):
+    try:
+        pass
+    except:
+        return False
+    return True
