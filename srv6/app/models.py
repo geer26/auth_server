@@ -91,7 +91,7 @@ class Testbatteries(db.Model):
         return f'<name: {self.name}> <description: {self.description}>'
 
     def get_self_json(self):
-        return {
+        data = {
             'id': self.id,
             'short_name': self.short_name,
             'name': self.name,
@@ -101,7 +101,9 @@ class Testbatteries(db.Model):
             'user_id': self.user_id,
             'requirements': self.requirements,
             'estimated time': self.est_time
-        }
+            }
+        #print(f'data: {data}')
+        return data
 
 
 class Surveys(db.Model):

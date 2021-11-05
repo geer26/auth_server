@@ -83,7 +83,9 @@ def get_admindata():
     for token in Tokens.query.all():
         data['tokens'].append(token.get_self_json())
 
-    return json.dumps(data)
+    d = json.dumps(data, ensure_ascii=False)
+    print(f'DATA TO RETURN: {d}')
+    return d
 
 
 def change_key(username, request):
