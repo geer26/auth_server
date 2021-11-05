@@ -351,7 +351,7 @@ def upd_user(data, user):
 
 
 def upd_testbattery(data, testbattery):
-    print(data)
+    #print(data)
     try:
         if data['name']:
             testbattery.name = str(data['name'])
@@ -361,6 +361,24 @@ def upd_testbattery(data, testbattery):
             testbattery.requirements = json.dumps(data['requirements'])
         if data['est_time']:
             testbattery.est_time = data['est_time']
+        db.session.commit()
+    except:
+        return False
+    return True
+
+
+def upd_survey(data, survey):
+    try:
+        if data['title']:
+            survey.title = str(data['title'])
+        if data['description']:
+            survey.description = data['description']
+        if data['is_active']:
+            survey.is_active = data['is_active']
+        if data['is_archived']:
+            survey.is_active = data['is_archived']
+        if data['email_body']:
+            survey.email_body = str(data['email_body'])
         db.session.commit()
     except:
         return False

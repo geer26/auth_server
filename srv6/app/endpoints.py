@@ -5,7 +5,7 @@ from flask import request, redirect, render_template, send_from_directory, send_
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
-    clean_database, upd_user, upd_testbattery, get_relevant_data
+    clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -593,7 +593,7 @@ class UpdateUser(Resource):
             return {'status': 0, 'message': f'User updated succesfully!'}, 200
         else:
             logger.upd_log(f'User <{userid}> update failed!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'User update failed!'}, 200
+            return {'status': 0, 'message': f'User update failed!'}, 500
 
 
 class UpdateTestbattery(Resource):
@@ -608,7 +608,7 @@ class UpdateTestbattery(Resource):
         tb_user = Users.query.get(int(testbattery.user_id))
 
         if not current_user.is_authenticated or not current_user.is_superuser or not tb_user.id == testbattery.user_id:
-            logger.upd_log('User update refused!', request=request, type=1, user=username)
+            logger.upd_log('Testbattery update refused!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
 
         if upd_testbattery(json_data, testbattery):
@@ -616,7 +616,31 @@ class UpdateTestbattery(Resource):
             return {'status': 0, 'message': f'Testbattery updated succesfully!'}, 200
         else:
             logger.upd_log(f'User <{testbattery.id}> update failed!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'Testbattery update failed!'}, 200
+            return {'status': 0, 'message': f'Testbattery update failed!'}, 500
+
+
+class UpdateSurvey(Resource):
+    def post(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        json_data = request.get_json(force=True)
+        survey = Surveys.query.get(int(json_data['sid']))
+        s_tb = Testbatteries.query.get(int(survey.testbattery_id))
+        tb_user = Users.query.get(int(s_tb.user_id))
+
+        if not current_user.is_authenticated or not current_user.is_superuser or not tb_user.username == current_user.username:
+            logger.upd_log('Survey update refused!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
+
+        if upd_survey(json_data, survey):
+            logger.upd_log(f'Testbattery <{testbattery.id}> succesfully updated!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Testbattery updated succesfully!'}, 200
+        else:
+            logger.upd_log(f'User <{testbattery.id}> update failed!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Testbattery update failed!'}, 500
 
 
 

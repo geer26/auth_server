@@ -109,14 +109,14 @@ class Testbatteries(db.Model):
 class Surveys(db.Model):
 
     id = db.Column(db.Integer, index=True, primary_key=True)
-    title = db.Column(db.String(255), nullable=False, default='Survey title')
-    description = db.Column(db.String(4096))
+    title = db.Column(db.String(255), nullable=False, default='Survey title')  #editable
+    description = db.Column(db.String(4096))  #editable
     is_anonymus = db.Column(db.Boolean, default=True, nullable=True)
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
-    is_archived = db.Column(db.Boolean, default=True, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)  #editable
+    is_archived = db.Column(db.Boolean, default=True, nullable=False)  #editable
     created_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
-    email_body = db.Column(db.String(), nullable=True)  # enc
+    email_body = db.Column(db.String(), nullable=True)  # enc, editable
     testbattery_id = db.Column(db.Integer, db.ForeignKey('testbatteries.id'))
 
     def __repr__(self):
