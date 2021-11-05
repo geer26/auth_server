@@ -84,7 +84,7 @@ def get_admindata():
         data['tokens'].append(token.get_self_json())
 
     d = json.dumps(data, ensure_ascii=False)
-    print(f'DATA TO RETURN: {d}')
+    #print(f'DATA TO RETURN: {d}')
     return d
 
 
@@ -99,13 +99,22 @@ def get_relevant_data(user):
 
     data['testbatteries'] = []
     data['surveys'] = []
+    data['results'] = []
+    data['clients'] = []
+    data['tokens'] = []
     for testbattery in Testbatteries.query.filter_by(user_id=user.id).all():
         data['testbatteries'].append(testbattery.get_self_json())
         for survey in Surveys.query.filter_by(testbattery_id=testbattery.id).all():
             data['surveys'].append(survey.get_self_json_enc())
-
-
-
+            for result in Results.query.filter_by(survey_id=survey.id).all():
+                data['results'].append(result.get_self_json())
+            for client in Clients.query.filter_by(survey_id=survey.id).all():
+                data['clients'].append(client.get_self_json_enc())
+            for token in Tokens.query.filter_by(survey_id=survey.id).all():
+                data['tokens'].append(token.get_self_json())
+    d = json.dumps(data, ensure_ascii=False)
+    #print(f'DATA TO RETURN: {d}')
+    return d
 
 
 def change_key(username, request):

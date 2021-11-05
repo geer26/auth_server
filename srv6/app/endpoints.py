@@ -5,7 +5,7 @@ from flask import request, redirect, render_template, send_from_directory, send_
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
-    clean_database, upd_user, upd_testbattery
+    clean_database, upd_user, upd_testbattery, get_relevant_data
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -49,16 +49,16 @@ class Admindata(Resource):
         else:
             username = 'ANONYMUS'
 
-        if not current_user.is_authenticated or not current_user or not current_user.is_superuser:
+        if not current_user.is_authenticated:
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Authentication required!'}, 401
         try:
-            data = json.loads(get_admindata())
+            data = json.loads(get_relevant_data(current_user))
         except:
             logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'error_code': 1, 'message': 'Error in collecting admindata!'}, 500
+            return {'error_code': 1, 'message': 'Error in collecting relevant data!'}, 500
 
-        logger.upd_log('API endpoint served', request=request, type=0, user=username)
+        logger.upd_log(f'Relevant data served to {current_user.username}', request=request, type=0, user=username)
         return data, 200
 
 
