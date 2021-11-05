@@ -5,7 +5,7 @@ from flask import request, redirect, render_template, send_from_directory, send_
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
-    clean_database, upd_user
+    clean_database, upd_user, upd_testbattery
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -605,13 +605,13 @@ class UpdateTestbattery(Resource):
 
         json_data = request.get_json(force=True)
         testbattery = Testbatteries.query.get(int(json_data['tbid']))
-        #tb_user = Users.query.get(int(testbattery.user_id))
+        tb_user = Users.query.get(int(testbattery.user_id))
 
-        if not current_user.is_authenticated or not current_user.is_superuser:
+        if not current_user.is_authenticated or not current_user.is_superuser or not tb_user.id == testbattery.user_id:
             logger.upd_log('User update refused!', request=request, type=1, user=username)
-            return {'status': 2, 'message': 'Must be logged in as admin!'}, 401
+            return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
 
-        if upd_user(json_data, testbattery):
+        if upd_testbattery(json_data, testbattery):
             logger.upd_log(f'Testbattery <{testbattery.id}> succesfully updated!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Testbattery updated succesfully!'}, 200
         else:

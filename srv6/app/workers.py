@@ -320,13 +320,16 @@ def upd_user(data, user):
 
 
 def upd_testbattery(data, testbattery):
+    print(testbattery)
     try:
-        if data['email']:
-            testbattery.email = secret.dump(data['email'])
-
-        if data['settings']:
-            testbattery.settings = json.dumps(data['settings'])
-
+        if data['name']:
+            testbattery.name = str(data['name']).encode(encoding='utf-8')
+        if data['description']:
+            testbattery.description = data['description']
+        if data['requirements']:
+            testbattery.requirements = json.dumps(data['requirements'])
+        if data['est_time']:
+            testbattery.est_time = data['est_time']
         db.session.commit()
     except:
         return False

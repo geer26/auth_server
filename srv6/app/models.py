@@ -99,7 +99,8 @@ class Testbatteries(db.Model):
             'created_at': self.created_at.strftime("%m/%d/%Y, %H:%M:%S"),
             'last_modified_at': self.last_modified_at.strftime("%m/%d/%Y, %H:%M:%S"),
             'user_id': self.user_id,
-            'requirements': self.requirements
+            'requirements': self.requirements,
+            'estimated time': self.est_time
         }
 
 
