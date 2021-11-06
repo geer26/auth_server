@@ -631,7 +631,7 @@ class UpdateSurvey(Resource):
         s_tb = Testbatteries.query.get(int(survey.testbattery_id))
         tb_user = Users.query.get(int(s_tb.user_id))
 
-        if not current_user.is_authenticated or not current_user.is_superuser or not tb_user.username == current_user.username:
+        if not current_user.is_authenticated and not current_user.is_superuser and not tb_user.username == current_user.username:
             logger.upd_log('Survey update refused!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
 
@@ -674,4 +674,5 @@ api.add_resource(DelClient, '/API/delclient')
 api.add_resource(ClearData, '/API/wipedatabase')
 api.add_resource(UpdateUser, '/API/updateuser')
 api.add_resource(UpdateTestbattery, '/API/updatebattery')
+api.add_resource(UpdateSurvey, '/API/updatesurvey')
 api.add_resource(UpdateClient, '/API/updateclient')

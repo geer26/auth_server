@@ -179,9 +179,9 @@ class Results(db.Model):
 class Clients(db.Model):
 
     id = db.Column(db.Integer, index=True, primary_key=True)
-    name = db.Column(db.String(), nullable=False)  # enc
-    email = db.Column(db.String(), default=secret.dump('nomail@all'))  # enc
-    is_archived = db.Column(db.Boolean, nullable=False, default=False)
+    name = db.Column(db.String(), nullable=False)  # enc, #editable
+    email = db.Column(db.String(), default=secret.dump('nomail@all'))  # enc, #editable
+    is_archived = db.Column(db.Boolean, nullable=False, default=False)  #editable
     created_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     result_id = db.Column(db.Integer, db.ForeignKey('results.id'))

@@ -351,7 +351,7 @@ def upd_user(data, user):
 
 
 def upd_testbattery(data, testbattery):
-    #print(data)
+    print(data)
     try:
         if data['name']:
             testbattery.name = str(data['name'])
@@ -378,7 +378,7 @@ def upd_survey(data, survey):
         if data['is_archived']:
             survey.is_active = data['is_archived']
         if data['email_body']:
-            survey.email_body = str(data['email_body'])
+            survey.email_body = secret.dump(data['email_body'])
         db.session.commit()
     except:
         return False
