@@ -182,6 +182,7 @@ class ChangePassword(Resource):
         return {}, 200
 
 
+#Documented!
 class DelUser(Resource):
     def post(self):
 
@@ -193,19 +194,19 @@ class DelUser(Resource):
         json_data = request.get_json(force=True)
 
         if not current_user.is_authenticated or not current_user.is_superuser:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log(f'User deletion due low userlevel refused!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Must be logged in as superuser!'}, 401
 
         if not json_data['uid']:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
+            logger.upd_log('Missing data for delete user', request=request, type=3, user=username)
             return {'status': 2, 'message': 'Data must be presented!'}, 500
 
         if del_user(int(json_data['uid'])):
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
-            return {'status': 0, 'message': 'User deleted succesfully!'}, 200
+            logger.upd_log(f'User {json_data["uid"]} deleted successfully!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'User {json_data["uid"]} deleted succesfully!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 3, 'message': 'Delete user failed!'}, 500
+            logger.upd_log(f'Delete user <{json_data["uid"]}> failed!', request=request, type=3, user=username)
+            return {'status': 3, 'message': f'Delete user <{json_data["uid"]}> failed!'}, 500
 
 
 class DelUserHtml(Resource):
@@ -341,6 +342,7 @@ class AdduserHtm(Resource):
             return {'status': 1, 'message': 'Internal server error!'}, 500
 
 
+#Documented!
 class Adduser(Resource):
     def post(self):
 
@@ -380,6 +382,7 @@ class Changekey(Resource):
         return {'status': 0}, 200
 
 
+#Documented!
 class AddBattery(Resource):
     def post(self):
 
@@ -391,21 +394,15 @@ class AddBattery(Resource):
         json_data = request.get_json(force=True)
 
         if not current_user.is_authenticated or not current_user.is_superuser:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log('Add testbattery refused due low userlevel!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in as superuser!'}, 401
 
         if add_battery(json_data):
-            try:
-                data = json.loads(get_admindata())
-            except:
-                logger.upd_log('Internal server error', request=request, type=3, user=username)
-                return {'error_code': 1, 'message': 'Internal server error!'}, 500
-            #html = render_template('/admin/admin_container.html', data=data)
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'Testbattery for user <{username}> added!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Testbattery added!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            logger.upd_log(f'Adding testbattery for user <{username}> failed!', request=request, type=3, user=username)
+            return {'status': 1, 'message': 'Adding testbattery failed!'}, 500
 
 
 class AddBatteryHtm(Resource):
@@ -437,6 +434,7 @@ class AddBatteryHtm(Resource):
             return {'status': 1, 'message': 'Internal server error!'}, 500
 
 
+#Documented!
 class DelBattery(Resource):
     def post(self):
 
@@ -448,21 +446,15 @@ class DelBattery(Resource):
         json_data = request.get_json(force=True)
 
         if not current_user.is_authenticated or not current_user.is_superuser:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log(f'Testbattery <{json_data["tbid"]}> deletion refused', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in as superuser!'}, 401
 
         if del_battery(json_data):
-            try:
-                data = json.loads(get_admindata())
-            except:
-                logger.upd_log('Internal server error', request=request, type=3, user=username)
-                return {'error_code': 1, 'message': 'Internal server error!'}, 500
-            #html = render_template('/admin/admin_container.html', data=data)
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'Testbattery <{json_data["tbid"]}> deleted!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Testbattery deleted!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            logger.upd_log(f'Testattery <{json_data["tbid"]}> deletion failed', request=request, type=3, user=username)
+            return {'status': 1, 'message': 'Testbattery deletion failed!'}, 500
 
 
 class DelBatteryHtm(Resource):
@@ -494,31 +486,29 @@ class DelBatteryHtm(Resource):
             return {'status': 1, 'message': 'Internal server error!'}, 500
 
 
+#Documented!
 class AddSurvey(Resource):
     def post(self):
+        can_add = False
+
         if current_user.is_authenticated:
             username = current_user.username
+            can_add = Testbatteries.query.get(int(json_data["tbid"])).user_id == current_user.id
         else:
             username = 'ANONYMUS'
 
         json_data = request.get_json(force=True)
 
-        if not current_user.is_authenticated:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
-            return {'status': 2, 'message': 'Must be logged in as superuser!'}, 401
+        if not current_user.is_superuser or not can_add:
+            logger.upd_log(f'Add survey for testbattery <{json_data["tbid"]}> refused!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Must be logged in!'}, 401
 
         if add_survey(json_data):
-            try:
-                data = json.loads(get_admindata())
-            except:
-                logger.upd_log('Internal server error', request=request, type=3, user=username)
-                return {'error_code': 1, 'message': 'Internal server error!'}, 500
-            #html = render_template('/admin/admin_container.html', data=data)
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'Survey added for testbattery <{json_data["tbid"]}> successfuly!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Survey added!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error! FOSSSS!!!'}, 500
+            logger.upd_log(f'Survey adding for testbattery <{json_data["tbid"]}> failed!', request=request, type=3, user=username)
+            return {'status': 1, 'message': 'Adding survey failed'}, 500
 
 
 class DelSurvey(Resource):
@@ -611,6 +601,7 @@ class ClearData(Resource):
             return {'status': 1, 'message': 'Internal server error!'}, 500
 
 
+#Documented!
 class UpdateUser(Resource):
     def post(self):
         if current_user.is_authenticated:
@@ -634,6 +625,7 @@ class UpdateUser(Resource):
             return {'status': 0, 'message': f'User update failed!'}, 500
 
 
+#Documented!
 class UpdateTestbattery(Resource):
     def post(self):
         if current_user.is_authenticated:
@@ -704,6 +696,7 @@ class UpdateClient(Resource):
         else:
             logger.upd_log(f'Client <{client.id}> update failed!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Client update failed!'}, 500
+
 
 '''
 TODO add/modify endpoints:

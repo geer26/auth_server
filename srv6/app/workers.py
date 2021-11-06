@@ -345,6 +345,12 @@ def upd_user(data, user):
         if data['settings']:
             user.settings = json.dumps(data['settings'])
 
+        if 'is_superuser' in data.keys():
+            user.is_superuser = data['is_superuser']
+
+        if 'is_enabled' in data.keys():
+            user.is_enabled = data['is_enabled']
+
         db.session.commit()
     except:
         return False

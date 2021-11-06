@@ -3,6 +3,8 @@
 ### Add superuser
 # Works only if there is no superuser!
 # Endpoint: /API/addsu
+# Method: POST
+# Type: application/json
 # JSON payload: {'username': <str>, 'password': <str>}
 # Returns: 200 or 400 with message
 POST http://127.0.0.1:5001/API/addsu HTTP/1.1
@@ -16,6 +18,8 @@ content-type: application/json
 
 ### Login
 # Endpoint: /API/login
+# Method: POST
+# Type: application/json
 # JSON payload: {'username': <str>, 'password': <str>, !'remember': <boolean>!}
 # Returns: 200 or 400 with message
 POST http://127.0.0.1:5001/API/login HTTP/1.1
@@ -29,34 +33,62 @@ content-type: application/json
 
 
 ### Add user
+# Endpoint: /API/adduser
+# Method: POST
+# Type: application/json
+# JSON payload: {"username": <str>, "password": <str>, "email": <str>, "is_enabled": <boolean>, "is_superuser": <boolean>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/adduser HTTP/1.1
 content-type: application/json
 
 {
-    "username": "kunbela",
-    "password": "1234567aA",
-    "email": "kunbela@gmail.com",
+    "username": "su2",
+    "password": "123456aA",
+    "email": "noa@gmail.com",
     "is_enabled": true,
-    "is_superuser": false
+    "is_superuser": true
 }
 
 
-### 3. Delete user !!!OPTIONAL!!!
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/deluser HTTP/1.1
+### Delete user
+# Deletes recursively user's testbatteries also!
+# Endpoint: /API/deluser
+# Method: POST
+# Type: application/json
+# JSON payload: {"uid": <int>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/deluser HTTP/1.1
 content-type: application/json
 
 {
-    "uid": 2
+    "uid": 8
 }
 
 
-### 4. Add testbattery
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/addbattery HTTP/1.1
+### Update user
+# Updates only data with NO database integrity issues
+# Endpoint: /API/updateuser
+# Method: POST
+# Type: application/json
+# JSON payload: {!"email": <str>!, !"settings": <JSON>!, !"is_superuser": <boolean>!, !"is_enabled": <boolean>!}
+# Returns: 200, 401 or 500 with message
+POST http://127.0.0.1:5001/API/deluser HTTP/1.1
+content-type: application/json
+
+{
+    "email": "new@mail.com",
+    "settings": {"new": "setting"},
+    "is_superuser": true,
+    "is_enabled": false
+}
+
+
+### Add testbattery
+# Endpoint: /API/addbattery
+# Method: POST
+# Type: application/json
+# JSON payload: {"short name": <str>, "name": <str>, "description": <str>, "user_id": <int>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/addbattery HTTP/1.1
 Content-Type: application/json
 
@@ -64,14 +96,17 @@ Content-Type: application/json
     "short_name": "proba-battery",
     "name": "Tesztcsomag, alapvető funkciók tesztelésére",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    "user_id": 2
+    "user_id": 7
 }
 
 
-### 4. Delete testbattery  !!!OPTIONAL!!!
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/delbattery HTTP/1.1
+### Delete testbattery
+# Deletes recursively testbattery's surveys also!
+# Endpoint: /API/delbattery
+# Method: POST
+# Type: application/json
+# JSON payload: {"tbid": <int>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/delbattery HTTP/1.1
 content-type: application/json
 
@@ -80,8 +115,13 @@ content-type: application/json
 }
 
 
-### 4/B. UPDATE testbattery  !!!OPTIONAL!!!
-#POST https://kecskecsecse.tk/API/updatebattery HTTP/1.1
+### Update testbattery
+#Updates only data with NO database integrity issues
+# Endpoint: /API/updatebattery
+# Method: POST
+# Type: application/json
+# JSON payload: {"tbid": <int>, !"name": <JSON>!, !"description": <str>!, !"requirements": <JSON>!, !"est_time": <str>!}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/updatebattery HTTP/1.1
 content-type: application/json
 
@@ -95,9 +135,11 @@ content-type: application/json
 
 
 ### 5. Add survey
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/addsurvey HTTP/1.1
+# Endpoint: /API/addsurvey
+# Method: POST
+# Type: application/json
+# JSON payload: {"tbid": <int>, "title": <str>, "email_body": <str>, "is_anonymus": <boolean>, "is_active": <boolean>, "is_archived": <boolean>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
 content-type: application/json
 
