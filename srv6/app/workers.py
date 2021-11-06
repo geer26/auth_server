@@ -392,12 +392,6 @@ def upd_survey(data, survey):
 
 
 def upd_client(data, client):
-    '''
-    "cid": 30,
-    "name": "Cecil",
-    "email": "cecil@mail.com",
-    "is_archived": true
-    '''
     try:
         if data['name']: client.name = secret.dump(data['name'])
         if data['email']: client.email = secret.dump(data['email'])
