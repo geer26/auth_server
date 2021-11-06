@@ -32,6 +32,7 @@ def del_user(id):
 
 
 def add_superuser(username,password):
+
     user = Users(username=username)
     user.is_superuser=True
     user.set_password(str(password))

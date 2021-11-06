@@ -20,7 +20,6 @@ class Logout(Resource):
             logger.upd_log('Logout request refused!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Logout request refused!'}, 400
 
-        #username = current_user.username
         logout_user()
         logger.upd_log(f'{username} logged out!', request=request, type=0, user=username)
         return {'status': 0, 'message': 'Logged out!'}, 200
@@ -55,7 +54,25 @@ class Healthcheck(Resource):
             username = 'ANONYMUS'
 
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
-        return {'status': 'healthy'}
+        return {'status': 'healthy'}, 200
+
+
+#Documented!
+class AddSuperuser(Resource):
+    def post(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        json_data = request.get_json(force=True)
+
+        if addsu(str(json_data['username']), str(json_data['password'])):
+            logger.upd_log(f'Superuser <{str(json_data["username"])}> added!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Superuser <{str(json_data["username"])}> added!'}, 200
+        else:
+            logger.upd_log(f'Superuser exists, adding failed!', request=request, type=0, user=username)
+            return {'status': 0, 'message': 'Superuser exists, adding failed!'}, 400
 
 
 class Admindata(Resource):
@@ -226,6 +243,7 @@ class DelUserHtml(Resource):
             return {'status': 3, 'message': 'Internal server error!'}, 500
 
 
+#Documented!
 class Login(Resource):
 
     def post(self):
@@ -246,17 +264,20 @@ class Login(Resource):
 
         username = json_data['username']
         password = json_data['password']
-        remember = json_data['remember']
+        if 'remember' in json_data.keys():
+            remember = json_data['remember']
+        else:
+            remember = False
 
         user = Users.query.filter_by(username=str(username)).one_or_none()
         if not user:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log(f'Login refused for {username} - no such user', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Invalid username!'}, 401
         if not user.check_password(str(password)):
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log(f'Login refused for {username} - invalid password', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Invalid password!'}, 401
         if not user.is_enabled:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log(f'Login refused for {username} - user disabled', request=request, type=1, user=username)
             return {'status': 1, 'message': 'User is disabled!'}, 401
 
         login_user(user, remember=remember)
@@ -331,15 +352,15 @@ class Adduser(Resource):
         json_data = request.get_json(force=True)
 
         if not current_user.is_authenticated or not current_user.is_superuser:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log('Adding user refused', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in as superuser!'}, 401
 
         if add_user(json_data):
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'User <{json_data["username"]}> by {username} added!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'User <{json_data["username"]}> added!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            logger.upd_log(f'Adding user {json_data["username"]} failed!', request=request, type=3, user=username)
+            return {'status': 1, 'message': f'Adding user {json_data["username"]} failed!'}, 500
 
 
 class Changekey(Resource):
@@ -694,6 +715,7 @@ TODO add/modify endpoints:
 '''
 
 
+api.add_resource(AddSuperuser, '/API/addsu')
 api.add_resource(Healthcheck, '/healthcheck')
 api.add_resource(GetAPIDocu, '/getdocu')
 api.add_resource(Admindata, '/API/admindata')

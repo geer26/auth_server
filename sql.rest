@@ -1,8 +1,11 @@
-### 1. Add superuser !!!OPTIONAL!!!
-#OK!
-#DC!
-POST https://kecskecsecse.tk/addsu HTTP/1.1
-#POST http://127.0.0.1:5001/addsu HTTP/1.1
+#PARAMS AMONGST ! ! ARE OPTIONAL
+
+### Add superuser
+# Works only if there is no superuser!
+# Endpoint: /API/addsu
+# JSON payload: {'username': <str>, 'password': <str>}
+# Returns: 200 or 400 with message
+POST http://127.0.0.1:5001/API/addsu HTTP/1.1
 content-type: application/json
 
 {
@@ -11,8 +14,10 @@ content-type: application/json
 }
 
 
-### 2. Login as post w JSON
-#POST https://kecskecsecse.tk/API/login HTTP/1.1
+### Login
+# Endpoint: /API/login
+# JSON payload: {'username': <str>, 'password': <str>, !'remember': <boolean>!}
+# Returns: 200 or 400 with message
 POST http://127.0.0.1:5001/API/login HTTP/1.1
 content-type: application/json
 
@@ -23,11 +28,8 @@ content-type: application/json
 }
 
 
-### 3. Add users
-#OK!
-#DC!
-POST https://kecskecsecse.tk/API/adduser HTTP/1.1
-#POST http://127.0.0.1:5001/API/adduser HTTP/1.1
+### Add user
+POST http://127.0.0.1:5001/API/adduser HTTP/1.1
 content-type: application/json
 
 {
