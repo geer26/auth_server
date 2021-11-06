@@ -116,7 +116,7 @@ content-type: application/json
 
 
 ### Update testbattery
-#Updates only data with NO database integrity issues
+# Updates only data with NO database integrity issues
 # Endpoint: /API/updatebattery
 # Method: POST
 # Type: application/json
@@ -135,6 +135,7 @@ content-type: application/json
 
 
 ### 5. Add survey
+# On anonymus survey it creates a result and a token entry also!
 # Endpoint: /API/addsurvey
 # Method: POST
 # Type: application/json
@@ -145,18 +146,21 @@ content-type: application/json
 
 {
     "title": "Egy névtelen felmérés",
-    "is_anonymus": true,
+    "is_anonymus": false,
     "is_active": true,
     "is_archived": false,
     "email_body": "A köremail szövege",
-    "tbid": 3
+    "tbid": 9
 }
 
 
-### 5. Del survey !!!OPTIONAL!!!
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/delsurvey HTTP/1.1
+### Delete survey
+# Deletes recursively survey's clients, and all relevant tokens and results also!
+# Endpoint: /API/delsurvey
+# Method: POST
+# Type: application/json
+# JSON payload: {"sid": <int>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/delsurvey HTTP/1.1
 content-type: application/json
 
@@ -165,25 +169,12 @@ content-type: application/json
 }
 
 
-### 5/B. Add survey (named)
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/addsurvey HTTP/1.1
-POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
-content-type: application/json
-
-{
-    "title": "Egy nevesített felmérés",
-    "is_anonymus": false,
-    "is_active": true,
-    "is_archived": false,
-    "email_body": "A köremail szövege",
-    "tbid": 8
-}
-
-
-### 5/C. UPDATE survey  !!!OPTIONAL!!!
-#POST https://kecskecsecse.tk/API/updatesurvey HTTP/1.1
+### Update survey
+# Endpoint: /API/updatesurvey
+# Method: POST
+# Type: application/json
+# JSON payload: {"sid": <int>, !"title": <str>!, !"description": <str>!, !"is_archived": <boolean>!, !is_archived: <boolean>!, !"email_body": <str>!}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/updatesurvey HTTP/1.1
 content-type: application/json
 
@@ -198,10 +189,13 @@ content-type: application/json
 
 
 
-### 6. Add client
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/addclient HTTP/1.1
+### Add client
+# Creates a result and a token entry for the client
+# Endpoint: /API/addclient
+# Method: POST
+# Type: application/json
+# JSON payload: {"name": <str>, "email": <str>, "is_archived": <boolean>, "survey_is": <int>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/addclient HTTP/1.1
 content-type: application/json
 
@@ -213,10 +207,13 @@ content-type: application/json
 }
 
 
-### 6. Delete client  !!!OPTIONAL!!!
-#OK!
-#DC!
-#POST https://kecskecsecse.tk/API/delclient HTTP/1.1
+### Delete client
+# Deletes the corresponding result and token for the client
+# Endpoint: /API/delclient
+# Method: POST
+# Type: application/json
+# JSON payload: {"cid": <int>}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/delclient HTTP/1.1
 content-type: application/json
 
@@ -225,8 +222,13 @@ content-type: application/json
 }
 
 
-### 6/C. UPDATE client  !!!OPTIONAL!!!
-#POST https://kecskecsecse.tk/API/updateclient HTTP/1.1
+### Update client
+# Updates the client data, keeps database coherency
+# Endpoint: /API/updateclient
+# Method: POST
+# Type: application/json
+# JSON payload: {"cid": <int>, !"name": <str>!, !"email": <str>!, !"is_archived": <boolean>!}
+# Returns: 200, 401 or 500 with message
 POST http://127.0.0.1:5001/API/updateclient HTTP/1.1
 content-type: application/json
 
@@ -238,23 +240,31 @@ content-type: application/json
 }
 
 
-### 7. get all data in JSON
-#OK!
-#GET https://kecskecsecse.tk/API/admindata HTTP/1.1
+### Get relevant data
+# Gets all data relevant to logged in user!
+# Endpoint: /API/admindata
+# Method: GET
+# Returns: 200, 401 or 500 with message
 GET http://127.0.0.1:5001/API/admindata HTTP/1.1
 
 
-### 8. wipe database (except admin users)
-#GET https://kecskecsecse.tk/API/wipedatabase HTTP/1.1
+### Wipe database
+# Wipes database except superusers
+# Endpoint: /API/wipedatabase
+# Method: GET
+# Returns: 200, 401 or 500 with message
 GET http://127.0.0.1:5001/API/wipedatabase HTTP/1.1
 
 
 
-### 8. Logout user
-#OK!
-#GET https://kecskecsecse.tk/API/logout HTTP/1.1
+### Logout user
+# logs out current user
+# Endpoint: /API/logout
+# Method: GET
+# Returns: 200, 400 with message
 GET http://127.0.0.1:5001/API/logout HTTP/1.1
 
 
-### 10. Healthcheck
+### Healthcheck
+# provides useful information - UNDER CONSTRUCTION!
 GET https://kecskecsecse.tk/healthcheck HTTP/1.1

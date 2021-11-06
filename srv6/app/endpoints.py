@@ -9,8 +9,10 @@ from app.workers import add_superuser, add_user, addsu, get_admindata, del_user,
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
+#Documented!
 class Logout(Resource):
     def get(self):
+
         if current_user.is_authenticated:
             username = current_user.username
         else:
@@ -75,6 +77,7 @@ class AddSuperuser(Resource):
             return {'status': 0, 'message': 'Superuser exists, adding failed!'}, 400
 
 
+#Documented!
 class Admindata(Resource):
     def get(self):
 
@@ -84,12 +87,12 @@ class Admindata(Resource):
             username = 'ANONYMUS'
 
         if not current_user.is_authenticated:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+            logger.upd_log('Serving data refused!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Authentication required!'}, 401
         try:
             data = json.loads(get_relevant_data(current_user))
         except:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
+            logger.upd_log(f'Data serving for {current_user.username} failed!', request=request, type=3, user=username)
             return {'error_code': 1, 'message': 'Error in collecting relevant data!'}, 500
 
         logger.upd_log(f'Relevant data served to {current_user.username}', request=request, type=0, user=username)
@@ -491,15 +494,15 @@ class AddSurvey(Resource):
     def post(self):
         can_add = False
 
+        json_data = request.get_json(force=True)
+
         if current_user.is_authenticated:
             username = current_user.username
             can_add = Testbatteries.query.get(int(json_data["tbid"])).user_id == current_user.id
         else:
             username = 'ANONYMUS'
 
-        json_data = request.get_json(force=True)
-
-        if not current_user.is_superuser or not can_add:
+        if not current_user.is_superuser and not can_add:
             logger.upd_log(f'Add survey for testbattery <{json_data["tbid"]}> refused!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in!'}, 401
 
@@ -511,77 +514,101 @@ class AddSurvey(Resource):
             return {'status': 1, 'message': 'Adding survey failed'}, 500
 
 
+#Documented!
 class DelSurvey(Resource):
     def post(self):
 
+        can_del = False
+
+        json_data = request.get_json(force=True)
+
         if current_user.is_authenticated:
             username = current_user.username
+            can_del = Testbatteries.query.get(int(json_data["tbid"])).user_id == current_user.id
         else:
             username = 'ANONYMUS'
 
         json_data = request.get_json(force=True)
 
-        if not current_user.is_authenticated:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+        if not current_user.is_superuser and not can_del:
+            logger.upd_log(f'Delete survey for testbattery <{json_data["tbid"]}> refused!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in!'}, 401
 
         if del_survey(json_data):
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'Survey deleted for testbattery <{json_data["tbid"]}> successfuly!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Survey deleted!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
+            logger.upd_log(f'Survey deleting for testbattery <{json_data["tbid"]}> failed!', request=request, type=3, user=username)
             return {'status': 1, 'message': 'Survey delete failed!!'}, 500
 
 
+#Documented
 class AddClient(Resource):
     def post(self):
 
+        can_add = False
+
+        json_data = request.get_json(force=True)
+
         if current_user.is_authenticated:
             username = current_user.username
+            sur = Surveys.query.get(int(json_data['survey_id']))
+            can_add = Testbatteries.query.get(sur.testbattery_id).user_id == current_user.id
         else:
             username = 'ANONYMUS'
 
         json_data = request.get_json(force=True)
 
-        if not current_user.is_authenticated:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
+        if not current_user.is_superuser and not can_add:
+            logger.upd_log(f'Add client for survey <{json_data["survey_id"]} refused!>', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in!'}, 401
 
+        if Surveys.query.get(int(json_data['survey_id'])).is_anonymus:
+            logger.upd_log(f'Add client for survey <{json_data["survey_id"]} refused!>', request=request, type=1,
+                           user=username)
+            return {'status': 2, 'message': 'Survey is anonymus!'}, 500
+
         if add_client(json_data):
-            try:
-                data = json.loads(get_admindata())
-            except:
-                logger.upd_log('Internal server error', request=request, type=3, user=username)
-                return {'error_code': 1, 'message': 'Internal server error!'}, 500
-            #html = render_template('/admin/admin_container.html', data=data)
-            logger.upd_log('API endpoint served', request=request, type=0, user=username)
+            logger.upd_log(f'Client added for survey <{json_data["survey_id"]}>!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Client added!'}, 200
         else:
-            logger.upd_log('Internal server error', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            logger.upd_log(f'Adding client for survey <{json_data["survey_id"]}> failed!', request=request, type=3, user=username)
+            return {'status': 1, 'message': 'Adding client failed!'}, 500
 
 
+#Documented!
 class DelClient(Resource):
     def post(self):
+        can_del = False
+
+        json_data = request.get_json(force=True)
+
         if current_user.is_authenticated:
             username = current_user.username
+            cli = Clients.query.get(int(json_data['cid']))
+            sur = Surveys.query.get(cli.survey_id)
+            can_del = Testbatteries.query.get(sur.testbattery_id).user_id == current_user.id
         else:
             username = 'ANONYMUS'
 
         json_data = request.get_json(force=True)
 
-        if not current_user.is_authenticated:
-            logger.upd_log('Client delete refused!', request=request, type=1, user=username)
+        if not current_user.is_superuser and not can_del:
+            logger.upd_log(f'Delete client for survey <{json_data["survey_id"]} refused!>', request=request, type=1,
+                           user=username)
             return {'status': 2, 'message': 'Must be logged in!'}, 401
 
         if del_client(json_data):
-            logger.upd_log(f'Client deleted!', request=request, type=0, user=username)
+            logger.upd_log(f'Client deleted for survey <{json_data["survey_id"]}>!', request=request, type=0,
+                           user=username)
             return {'status': 0, 'message': f'Client deleted!'}, 200
         else:
-            logger.upd_log('Client delete failed!', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            logger.upd_log(f'Deleteing client for survey <{json_data["survey_id"]}> failed!', request=request, type=3,
+                           user=username)
+            return {'status': 1, 'message': 'Deleting client failed!'}, 500
 
 
+#Documented!
 class ClearData(Resource):
     def get(self):
         if current_user.is_authenticated:
@@ -597,8 +624,8 @@ class ClearData(Resource):
             logger.upd_log('Database wiped', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Database wiped!'}, 200
         else:
-            logger.upd_log('Database wipe refused!', request=request, type=3, user=username)
-            return {'status': 1, 'message': 'Internal server error!'}, 500
+            logger.upd_log('Database wipe failed!', request=request, type=3, user=username)
+            return {'status': 1, 'message': 'Database wipe failed!'}, 500
 
 
 #Documented!
@@ -649,6 +676,7 @@ class UpdateTestbattery(Resource):
             return {'status': 0, 'message': f'Testbattery update failed!'}, 500
 
 
+#Documented!
 class UpdateSurvey(Resource):
     def post(self):
         if current_user.is_authenticated:
@@ -673,6 +701,7 @@ class UpdateSurvey(Resource):
             return {'status': 0, 'message': f'Survey update failed!'}, 500
 
 
+#Documented!
 class UpdateClient(Resource):
     def post(self):
         if current_user.is_authenticated:
