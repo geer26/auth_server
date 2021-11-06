@@ -31,6 +31,7 @@ def index():
     return render_template('index2.html')
 
 
+'''
 @app.route('/addsu', methods=['POST'])
 def add_superuser():
     if not request.json['username'] or not request.json['password']:
@@ -46,6 +47,7 @@ def add_superuser():
     else:
         logger.upd_log('Unsuccessful addsuperuser request', request=request, type=2, user='ANONYMUS')
         return 'Superuser exists!', 500
+'''
 
 
 @app.route('/admin_dashboard', methods=['GET', 'POST'])
@@ -57,6 +59,7 @@ def adm_dashboard():
     return render_template('admin_page_2.html', title='Admin page', data= json.loads(get_admindata()))
 
 
+'''
 @app.route('/logout', methods=['GET'])
 def logout():
     if not current_user.is_authenticated:
@@ -65,6 +68,7 @@ def logout():
     logger.upd_log('User logged out', request=request, type=0, user=current_user.username)
     logout_user()
     return redirect('/')
+'''
 
 
 @app.route('/get_current_log', methods=['GET'])

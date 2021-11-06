@@ -9,6 +9,23 @@ from app.workers import add_superuser, add_user, addsu, get_admindata, del_user,
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
+class Logout(Resource):
+    def get(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        if not current_user:
+            logger.upd_log('Logout request refused!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Logout request refused!'}, 400
+
+        username = current_user.username
+        logout_user()
+        logger.upd_log(f'{username} logged out!', request=request, type=0, user=username)
+        return {'status': 0, 'message': 'Logged out!'}, 200
+
+
 class GetAPIDocu(Resource):
     def get(self):
         docu = {}
@@ -645,8 +662,27 @@ class UpdateSurvey(Resource):
 
 class UpdateClient(Resource):
     def post(self):
-        pass
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
 
+        json_data = request.get_json(force=True)
+        client = Clients.query.get(int(json_data['cid']))
+        survey = Surveys.query.get(int(client.survey.id))
+        s_tb = Testbatteries.query.get(int(survey.testbattery_id))
+        tb_user = Users.query.get(int(s_tb.user_id))
+
+        if not current_user.is_authenticated and not current_user.is_superuser and not tb_user.username == current_user.username:
+            logger.upd_log('Client update refused!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
+
+        if upd_client(json_data, client):
+            logger.upd_log(f'Survey <{survey.id}> succesfully updated!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Survey updated succesfully!'}, 200
+        else:
+            logger.upd_log(f'Survey <{survey.id}> update failed!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Survey update failed!'}, 500
 
 
 
@@ -676,3 +712,4 @@ api.add_resource(UpdateUser, '/API/updateuser')
 api.add_resource(UpdateTestbattery, '/API/updatebattery')
 api.add_resource(UpdateSurvey, '/API/updatesurvey')
 api.add_resource(UpdateClient, '/API/updateclient')
+api.add_resource(Logout, '/API/logout')
