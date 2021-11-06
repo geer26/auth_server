@@ -368,14 +368,12 @@ def upd_testbattery(data, testbattery):
 
 
 def upd_survey(data, survey):
-    #print(data.keys())
     try:
         if data['title']:
             survey.title = str(data['title'])
         if data['description']:
             survey.description = data['description']
         if 'is_active' in data.keys():
-            #print('HAS!')
             if data['is_active']:
                 survey.is_active = True
             else:
@@ -394,8 +392,21 @@ def upd_survey(data, survey):
 
 
 def upd_client(data, client):
+    '''
+    "cid": 30,
+    "name": "Cecil",
+    "email": "cecil@mail.com",
+    "is_archived": true
+    '''
     try:
-        pass
+        if data['name']: client.name = secret.dump(data['name'])
+        if data['email']: client.email = secret.dump(data['email'])
+        if 'is_archived' in data.keys():
+            if data['is_archived']:
+                client.is_archived = True
+            else:
+                client.is_archived = False
+        db.session.commit()
     except:
         return False
     return True

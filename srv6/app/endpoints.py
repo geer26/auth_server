@@ -20,7 +20,7 @@ class Logout(Resource):
             logger.upd_log('Logout request refused!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Logout request refused!'}, 400
 
-        username = current_user.username
+        #username = current_user.username
         logout_user()
         logger.upd_log(f'{username} logged out!', request=request, type=0, user=username)
         return {'status': 0, 'message': 'Logged out!'}, 200
@@ -669,7 +669,7 @@ class UpdateClient(Resource):
 
         json_data = request.get_json(force=True)
         client = Clients.query.get(int(json_data['cid']))
-        survey = Surveys.query.get(int(client.survey.id))
+        survey = Surveys.query.get(int(client.survey_id))
         s_tb = Testbatteries.query.get(int(survey.testbattery_id))
         tb_user = Users.query.get(int(s_tb.user_id))
 
@@ -678,12 +678,20 @@ class UpdateClient(Resource):
             return {'status': 2, 'message': 'Must be logged in as admin or relevant user!'}, 401
 
         if upd_client(json_data, client):
-            logger.upd_log(f'Survey <{survey.id}> succesfully updated!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'Survey updated succesfully!'}, 200
+            logger.upd_log(f'Client <{client.id}> succesfully updated!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Client updated succesfully!'}, 200
         else:
-            logger.upd_log(f'Survey <{survey.id}> update failed!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'Survey update failed!'}, 500
+            logger.upd_log(f'Client <{client.id}> update failed!', request=request, type=0, user=username)
+            return {'status': 0, 'message': f'Client update failed!'}, 500
 
+'''
+TODO add/modify endpoints:
+    - get_current_log
+    - get_archive_log
+    - GET!!! /API/auth_admin or _user or _client - 201 or 401 (gets current_user; returns is_superuser (if user returns 200 or 401))
+    - POST!!! /API/clientlogin, JSON payload: token; if anonym surv.: token must exists + token.survey is_active and not is_archived)
+    (if survey not anonym: + client.status not is_finished) -> 200 + survey.title, survey.description, tb.est_time, tb.short_name 
+'''
 
 
 api.add_resource(Healthcheck, '/healthcheck')

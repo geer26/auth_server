@@ -24,8 +24,6 @@ def index():
 
     if current_user.is_authenticated and not current_user.is_superuser:
         logger.upd_log('User indexpage served', request=request, type=0, user=current_user.username)
-        pass
-        #redirect here to user dashboard!
 
     logger.upd_log('Unauth indexpage served', request=request, type=0, user='ANONYMUS')
     return render_template('index2.html')

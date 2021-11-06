@@ -74,7 +74,7 @@ POST http://127.0.0.1:5001/API/delbattery HTTP/1.1
 content-type: application/json
 
 {
-    "tbid": 3
+    "tbid": 8
 }
 
 
@@ -139,16 +139,16 @@ content-type: application/json
 
 
 ### 5/C. UPDATE survey  !!!OPTIONAL!!!
-#POST https://kecskecsecse.tk/API/updatebattery HTTP/1.1
-POST http://127.0.0.1:5001/API/updatebattery HTTP/1.1
+#POST https://kecskecsecse.tk/API/updatesurvey HTTP/1.1
+POST http://127.0.0.1:5001/API/updatesurvey HTTP/1.1
 content-type: application/json
 
 {
     "sid": 30,
     "title": "Új cím",
     "description": "Új leírás",
-    "is_active": false,
-    "is_archived": true,
+    "is_active": true,
+    "is_archived": false,
     "email_body": "Új üzenettörzs"
 }
 
@@ -169,7 +169,7 @@ content-type: application/json
 }
 
 
-### 6. Delete client !!!OPTIONAL!!!
+### 6. Delete client  !!!OPTIONAL!!!
 #OK!
 #DC!
 #POST https://kecskecsecse.tk/API/delclient HTTP/1.1
@@ -178,6 +178,19 @@ content-type: application/json
 
 {
     "cid": 3
+}
+
+
+### 6/C. UPDATE client  !!!OPTIONAL!!!
+#POST https://kecskecsecse.tk/API/updateclient HTTP/1.1
+POST http://127.0.0.1:5001/API/updateclient HTTP/1.1
+content-type: application/json
+
+{
+    "cid": 8,
+    "name": "Cecil",
+    "email": "cecil@mail.com",
+    "is_archived": true
 }
 
 
@@ -195,8 +208,8 @@ GET http://127.0.0.1:5001/API/wipedatabase HTTP/1.1
 
 ### 8. Logout user
 #OK!
-#GET https://kecskecsecse.tk/logout HTTP/1.1
-GET http://127.0.0.1:5001/logout HTTP/1.1
+#GET https://kecskecsecse.tk/API/logout HTTP/1.1
+GET http://127.0.0.1:5001/API/logout HTTP/1.1
 
 
 ### 10. Healthcheck
