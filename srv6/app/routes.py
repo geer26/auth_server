@@ -68,7 +68,7 @@ def logout():
     return redirect('/')
 '''
 
-
+'''
 @app.route('/get_current_log', methods=['GET'])
 def get_current_log():
     if not current_user.is_authenticated:
@@ -93,3 +93,4 @@ def get_archive_log():
     path = os.path.join(app.config['LOG_FOLDER'], 'log_archive.zip')
     logger.upd_log('Archive logfile downloaded', request=request, type=0, user=current_user.username)
     return send_file(path, attachment_filename='log_archive.zip'),200
+'''

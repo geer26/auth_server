@@ -1,8 +1,13 @@
 import json
 import uuid
+from datetime import datetime
 #from random import SystemRandom
-from app import db, logger, secret
+from app import db, logger, secret, start_time
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
+
+
+def uptime():
+    return str( datetime.now() - start_time )
 
 
 def addsu(username, password):

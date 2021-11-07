@@ -7,6 +7,7 @@ from fernet import Secret
 from flask_restful import Api
 from logger import Logger
 from flask_cors import CORS
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -34,6 +35,10 @@ secret = Secret(app)
 logger = Logger(app)
 
 
+start_time = datetime.now()
+
+
 from app import routes, models, workers, endpoints
+
 
 logger.upd_log('App started', type=9, user='SYSTEM')

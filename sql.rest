@@ -145,7 +145,7 @@ POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Egy névtelen felmérés",
+    "title": "Egy nevesített felmérés",
     "is_anonymus": false,
     "is_active": true,
     "is_archived": false,
@@ -165,7 +165,7 @@ POST http://127.0.0.1:5001/API/delsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "sid": 6
+    "sid": 32
 }
 
 
@@ -203,7 +203,7 @@ content-type: application/json
     "name": "Aladár",
     "email": "aladar@email.com",
     "is_archived": false,
-    "survey_id": 30
+    "survey_id": 33
 }
 
 
@@ -267,4 +267,32 @@ GET http://127.0.0.1:5001/API/logout HTTP/1.1
 
 ### Healthcheck
 # provides useful information - UNDER CONSTRUCTION!
-GET https://kecskecsecse.tk/healthcheck HTTP/1.1
+# Endpoint: /API/healthcheck
+GET http://127.0.0.1:5001/healthcheck HTTP/1.1
+
+
+### Read current log
+# Method: GET
+# Returns: 200 and content of the current log, OR 401 or 500
+GET http://127.0.0.1:5001/API/readlog HTTP/1.1
+
+
+### Download log archive
+# Do not includes the current logfile!
+# Method: GET
+# Returns: 200 and the zipfile, OR 401 or 500
+GET http://127.0.0.1:5001/API/downloadlog HTTP/1.1
+
+
+### Authenticate admin user
+# Endpoint: /API/auth_admin
+# Method: GET
+# Returns: true, 200 or false, 401
+GET http://127.0.0.1:5001/API/auth_admin HTTP/1.1
+
+
+### Authenticate user
+# Endpoint: /API/auth_user
+# Method: GET
+# Returns: true, 200 or false, 401
+GET http://127.0.0.1:5001/API/auth_user HTTP/1.1

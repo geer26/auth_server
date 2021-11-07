@@ -1,11 +1,13 @@
 import json
+import os
 from flask_restful import Resource, reqparse
 from flask_login import current_user, login_user, logout_user, login_required
 from flask import request, redirect, render_template, send_from_directory, send_file
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
-    clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client
+    clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client, \
+    uptime
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -47,6 +49,7 @@ class GetAPIDocu(Resource):
         return docu, 200
 
 
+#Documented!
 class Healthcheck(Resource):
     def get(self):
 
@@ -56,7 +59,10 @@ class Healthcheck(Resource):
             username = 'ANONYMUS'
 
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
-        return {'status': 'healthy'}, 200
+        return {
+                'status': 'healthy',
+                'uptime': uptime()
+               }, 200
 
 
 #Documented!
@@ -727,9 +733,84 @@ class UpdateClient(Resource):
             return {'status': 0, 'message': f'Client update failed!'}, 500
 
 
+#Documented!
+class ReadCurrentLog(Resource):
+    def get(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        if not current_user or not current_user.is_superuser:
+            logger.upd_log('Log serve refused!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Must be logged in as admin!'}, 401
+
+        try:
+            logcontent = logger.return_json()
+            logger.upd_log('Log serve refused!', request=request, type=1, user=username)
+            return {'status': 0, 'Log content': logcontent}, 200
+        except:
+            logger.upd_log('Error while reading log content!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Error while reading logfile content!'}, 500
+
+
+#TODO finish!
+class DownloadCurrentLog(Resource):
+    def get(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        if not current_user or not current_user.is_superuser:
+            logger.upd_log('Log serve refused!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Must be logged in as admin!'}, 401
+
+        try:
+            path = os.path.join(app.config['LOG_FOLDER'], 'log_archive.zip')
+            print(path)
+            logger.upd_log('Archive logfile downloaded', request=request, type=0, user=current_user.username)
+            return send_file(path, attachment_filename='log_archive.zip'), 200
+        except:
+            logger.upd_log('Error while reading serving archived logs!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Error while serving archived logs!'}, 500
+
+
+#Documented!
+class AuthAdmin(Resource):
+    def get(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        if current_user.is_authenticated and current_user.is_superuser:
+            logger.upd_log('Admin auth verified!', request=request, type=1, user=username)
+            return True, 200
+        else:
+            logger.upd_log('Admin auth refused!', request=request, type=1, user=username)
+            return False, 401
+
+
+#Documented!
+class AuthUser(Resource):
+    def get(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        if current_user.is_authenticated and not current_user.is_superuser:
+            logger.upd_log('Admin auth verified!', request=request, type=1, user=username)
+            return True, 200
+        else:
+            logger.upd_log('Admin auth refused!', request=request, type=1, user=username)
+            return False, 401
+
+
 '''
 TODO add/modify endpoints:
-    - get_current_log
+    - get_current_log #DONE
     - get_archive_log
     - GET!!! /API/auth_admin or _user or _client - 201 or 401 (gets current_user; returns is_superuser (if user returns 200 or 401))
     - POST!!! /API/clientlogin, JSON payload: token; if anonym surv.: token must exists + token.survey is_active and not is_archived)
@@ -765,3 +846,7 @@ api.add_resource(UpdateTestbattery, '/API/updatebattery')
 api.add_resource(UpdateSurvey, '/API/updatesurvey')
 api.add_resource(UpdateClient, '/API/updateclient')
 api.add_resource(Logout, '/API/logout')
+api.add_resource(ReadCurrentLog, '/API/readlog')
+api.add_resource(DownloadCurrentLog, '/API/downloadlog')
+api.add_resource(AuthAdmin, '/API/auth_admin')
+api.add_resource(AuthUser, '/API/auth_user')
