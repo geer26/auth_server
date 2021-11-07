@@ -2,7 +2,7 @@ import json
 import os
 from flask_restful import Resource, reqparse
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import request, redirect, render_template, send_from_directory, send_file
+from flask import request, redirect, render_template, send_from_directory, send_file, session
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -807,6 +807,7 @@ class AuthUser(Resource):
 
 class AuthClient(Resource):
     def get(self):
+        print(session)
         if current_user.is_authenticated:
             username = current_user.username
         else:
