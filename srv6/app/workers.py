@@ -14,7 +14,7 @@ def get_uptime():
 def sysinfo():
     data = {
         'status': 'healthy',
-        'uptime': get_uptime()
+        'app_uptime': get_uptime()
     }
 
 
