@@ -1,13 +1,47 @@
 import json
 import uuid
 from datetime import datetime
+import platform
 #from random import SystemRandom
 from app import db, logger, secret, start_time
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
-def uptime():
+def get_uptime():
     return str( datetime.now() - start_time )
+
+
+def sysinfo():
+    data = {
+        'status': 'healthy',
+        'uptime': get_uptime()
+    }
+
+
+    with open("/proc/uptime", "r") as f:
+        uptime = f.read().split(" ")[0].strip()
+    uptime = int(float(uptime))
+    uptime_hours = uptime // 3600
+    uptime_minutes = (uptime % 3600) // 60
+    uptime_seconds = uptime - uptime_hours * 3600 - uptime_minutes * 60
+    data['host_uptime'] = str(uptime_hours) + ":" + str(uptime_minutes) + ":" + str(uptime_seconds)
+
+    data['processors'] = []
+    with open("/proc/cpuinfo", "r") as f:
+        info = f.readlines()
+    cpuinfo = [x.strip().split(":")[1] for x in info if "model name" in x]
+    for index, item in enumerate(cpuinfo):
+        data['processors'].append(item)
+
+    with open("/proc/meminfo", "r") as f:
+        lines = f.readlines()
+    data['memory'] = []
+    data['memory'].append(lines[0].strip())
+    data['memory'].append(lines[1].strip())
+
+    data['architecture'] = platform.machine()
+
+    return data
 
 
 def addsu(username, password):

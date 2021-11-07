@@ -7,7 +7,7 @@ from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
     clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client, \
-    uptime
+    get_uptime, sysinfo
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -59,10 +59,7 @@ class Healthcheck(Resource):
             username = 'ANONYMUS'
 
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
-        return {
-                'status': 'healthy',
-                'uptime': uptime()
-               }, 200
+        return sysinfo(), 200
 
 
 #Documented!
