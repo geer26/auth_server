@@ -277,7 +277,7 @@ GET http://127.0.0.1:5001/healthcheck HTTP/1.1
 GET http://127.0.0.1:5001/API/readlog HTTP/1.1
 
 
-### Download log archive
+### Download log archive - UNDER CONSTRUCTION!
 # Do not includes the current logfile!
 # Method: GET
 # Returns: 200 and the zipfile, OR 401 or 500
@@ -296,3 +296,12 @@ GET http://127.0.0.1:5001/API/auth_admin HTTP/1.1
 # Method: GET
 # Returns: true, 200 or false, 401
 GET http://127.0.0.1:5001/API/auth_user HTTP/1.1
+
+
+### Authenticate client
+# if logged in or no token presented, returns false!
+# Endpoint: /API/auth_user
+# Method: GET
+# Param: token
+# Returns: true, 200 or false, 401
+GET http://127.0.0.1:5001/API/auth_client?token=e3d7f6b8-3f95-11ec-a9d8-dfc8ae3fa97c HTTP/1.1

@@ -801,11 +801,35 @@ class AuthUser(Resource):
             username = 'ANONYMUS'
 
         if current_user.is_authenticated and not current_user.is_superuser:
-            logger.upd_log('Admin auth verified!', request=request, type=1, user=username)
+            logger.upd_log('User auth verified!', request=request, type=1, user=username)
             return True, 200
         else:
-            logger.upd_log('Admin auth refused!', request=request, type=1, user=username)
+            logger.upd_log('User auth refused!', request=request, type=1, user=username)
             return False, 401
+
+
+class AuthClient(Resource):
+    def get(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        if current_user.is_authenticated or not request.args.get('token'):
+            logger.upd_log('Client auth refused!', request=request, type=1, user=username)
+            return False, 401
+
+        token = request.args.get("token") or None
+
+        for t in Tokens.query.all():
+            if t.token == token:
+                logger.upd_log('Client auth verified!', request=request, type=1, user=username)
+                return True, 200
+
+        logger.upd_log('Client auth refused!', request=request, type=1, user=username)
+        return False, 401
+
+
 
 
 '''
@@ -850,3 +874,4 @@ api.add_resource(ReadCurrentLog, '/API/readlog')
 api.add_resource(DownloadCurrentLog, '/API/downloadlog')
 api.add_resource(AuthAdmin, '/API/auth_admin')
 api.add_resource(AuthUser, '/API/auth_user')
+api.add_resource(AuthClient, '/API/auth_client')
