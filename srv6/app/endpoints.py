@@ -812,7 +812,7 @@ class Auth(Resource):
             return True, 200
         else:
             logger.upd_log('Authentication refused!', request=request, type=1, user=username)
-            return False, 400
+            return False, 401
 
 
 #Documented!
