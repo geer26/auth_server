@@ -782,7 +782,7 @@ class DownloadCurrentLog(Resource):
             filename = logger.archive_name
             #print(f'PATH: {path}, FILENAME: {filename}')
             logger.upd_log('Archive logfile downloaded', request=request, type=0, user=current_user.username)
-            return send_from_directory(path, filename=logger.archive_name), 200
+            return send_from_directory(path, filename=filename), 200
         except:
             logger.upd_log('Error while reading serving archived logs!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Error while serving archived logs!'}, 500
