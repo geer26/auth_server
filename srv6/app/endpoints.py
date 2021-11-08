@@ -2,8 +2,8 @@ import json
 import os
 import uuid
 from flask_restful import Resource, reqparse
-from flask_login import current_user, login_user, logout_user, login_required
-from flask import request, redirect, render_template, send_from_directory, send_file, session, make_response, Response
+from flask_login import current_user, login_user, logout_user
+from flask import request, render_template, send_from_directory, session, make_response, Response
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -301,7 +301,7 @@ class Login(Resource):
             session['role'] = 'admin'
         elif not user.is_superuser:
             session['role'] = 'user'
-        print(session)
+        #print(session)
 
         if user.is_superuser:
             logger.upd_log(f'{user.username} logged in succesfully!', request=request, type=0, user=username)
@@ -758,14 +758,15 @@ class ReadCurrentLog(Resource):
 
         try:
             logcontent = logger.return_json()
-            logger.upd_log('Log serve refused!', request=request, type=1, user=username)
+            logger.upd_log('Current log served!', request=request, type=0, user=username)
             return {'status': 0, 'Log content': logcontent}, 200
         except:
             logger.upd_log('Error while reading log content!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Error while reading logfile content!'}, 500
 
 
-#TODO finish!
+#Documented!
+#TODO finish or test
 class DownloadCurrentLog(Resource):
     def get(self):
         if current_user.is_authenticated:
@@ -778,10 +779,11 @@ class DownloadCurrentLog(Resource):
             return {'status': 2, 'message': 'Must be logged in as admin!'}, 401
 
         try:
-            path = os.path.join(app.config['LOG_FOLDER'], 'log_archive.zip')
-            print(path)
+            path = os.path.join(logger.folder)
+            filename = logger.archive_name
+            print(f'PATH: {path}, FILENAME: {filename}')
             logger.upd_log('Archive logfile downloaded', request=request, type=0, user=current_user.username)
-            return send_file(path, attachment_filename='log_archive.zip'), 200
+            return send_from_directory(path, filename=logger.archive_name), 200
         except:
             logger.upd_log('Error while reading serving archived logs!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Error while serving archived logs!'}, 500
@@ -812,55 +814,6 @@ class Auth(Resource):
         else:
             logger.upd_log('Authentication refused!', request=request, type=1, user=username)
             return False, 400
-
-        '''
-        print(session)
-        if current_user.is_authenticated:
-            username = current_user.username
-        else:
-            username = 'ANONYMUS'
-
-        arg = request.args.get('role') or None
-
-        if not arg:
-            logger.upd_log('Failed auth attempt due missing "role" argument!', request=request, type=1, user=username)
-            return {'status': 1, 'message': 'Missing role argument!'}, 400
-
-        token = request.cookies.get('token') or None
-
-        if token and arg == 'client':
-            for t in Tokens.query.all():
-                if t.token == token:
-                    logger.upd_log('Client auth verified!', request=request, type=1, user=username)
-                    return True, 200
-
-                logger.upd_log('Client auth refused!', request=request, type=1, user=username)
-                return False, 401
-
-        elif not token and arg == 'client':
-            logger.upd_log('Failed client auth attempt due missing token cookie!', request=request, type=1, user=username)
-            return {'status': 1, 'message': 'Missing token cookie!'}, 400
-
-        elif not token and arg == 'admin':
-            if current_user.is_authenticated and current_user.is_superuser:
-                logger.upd_log('Admin auth verified!', request=request, type=1, user=username)
-                return True, 200
-            else:
-                logger.upd_log('Admin auth refused!', request=request, type=1, user=username)
-                return False, 401
-
-        elif not token and arg == 'user':
-            if current_user.is_authenticated and not current_user.is_superuser:
-                logger.upd_log('User auth verified!', request=request, type=1, user=username)
-                return True, 200
-            else:
-                logger.upd_log('User auth refused!', request=request, type=1, user=username)
-                return False, 401
-
-        else:
-            logger.upd_log('Auth went wrong!', request=request, type=1, user=username)
-            return {'status': 3, 'message': 'This endpoint needs some work'}, 500
-        '''
 
 
 #Documented!
