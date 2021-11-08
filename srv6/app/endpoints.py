@@ -25,9 +25,17 @@ class Logout(Resource):
             logger.upd_log('Logout request refused!', request=request, type=1, user=username)
             return {'status': 1, 'message': 'Logout request refused!'}, 400
 
+        data = json.dumps({'survey': {
+            'status': 0,
+            'message': 'Logged out!'
+        }})
+
         logout_user()
+        session.clear()
+        response = Response(data, status=200, mimetype='application/json')
+        response.delete_cookie('token')
         logger.upd_log(f'{username} logged out!', request=request, type=0, user=username)
-        return {'status': 0, 'message': 'Logged out!'}, 200
+        return response
 
 
 class GetAPIDocu(Resource):
@@ -289,6 +297,10 @@ class Login(Resource):
             return {'status': 1, 'message': 'User is disabled!'}, 401
 
         login_user(user, remember=remember)
+        if user.is_superuser:
+            session['role'] = 'admin'
+        elif not user.is_superuser:
+            session['role'] = 'user'
         print(session)
 
         if user.is_superuser:
@@ -776,60 +788,82 @@ class DownloadCurrentLog(Resource):
 
 
 #Documented!
-class AuthAdmin(Resource):
+class Auth(Resource):
+
     def get(self):
         if current_user.is_authenticated:
             username = current_user.username
         else:
             username = 'ANONYMUS'
 
-        if current_user.is_authenticated and current_user.is_superuser:
-            logger.upd_log('Admin auth verified!', request=request, type=1, user=username)
+        role = str(session.get('role')) or None
+        arg = str(request.args.get('role')) or None
+
+        if not arg:
+            logger.upd_log('Failed auth attempt due missing "role" argument!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Missing role argument!'}, 400
+        if not role:
+            logger.upd_log('Failed auth attempt due missing session data!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Missing session data!'}, 500
+
+        if role == arg:
+            logger.upd_log('Authentication successful!', request=request, type=1, user=username)
             return True, 200
         else:
-            logger.upd_log('Admin auth refused!', request=request, type=1, user=username)
-            return False, 401
+            logger.upd_log('Authentication refused!', request=request, type=1, user=username)
+            return False, 400
+
+        '''
+        print(session)
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        arg = request.args.get('role') or None
+
+        if not arg:
+            logger.upd_log('Failed auth attempt due missing "role" argument!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Missing role argument!'}, 400
+
+        token = request.cookies.get('token') or None
+
+        if token and arg == 'client':
+            for t in Tokens.query.all():
+                if t.token == token:
+                    logger.upd_log('Client auth verified!', request=request, type=1, user=username)
+                    return True, 200
+
+                logger.upd_log('Client auth refused!', request=request, type=1, user=username)
+                return False, 401
+
+        elif not token and arg == 'client':
+            logger.upd_log('Failed client auth attempt due missing token cookie!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Missing token cookie!'}, 400
+
+        elif not token and arg == 'admin':
+            if current_user.is_authenticated and current_user.is_superuser:
+                logger.upd_log('Admin auth verified!', request=request, type=1, user=username)
+                return True, 200
+            else:
+                logger.upd_log('Admin auth refused!', request=request, type=1, user=username)
+                return False, 401
+
+        elif not token and arg == 'user':
+            if current_user.is_authenticated and not current_user.is_superuser:
+                logger.upd_log('User auth verified!', request=request, type=1, user=username)
+                return True, 200
+            else:
+                logger.upd_log('User auth refused!', request=request, type=1, user=username)
+                return False, 401
+
+        else:
+            logger.upd_log('Auth went wrong!', request=request, type=1, user=username)
+            return {'status': 3, 'message': 'This endpoint needs some work'}, 500
+        '''
 
 
 #Documented!
-class AuthUser(Resource):
-    def get(self):
-        if current_user.is_authenticated:
-            username = current_user.username
-        else:
-            username = 'ANONYMUS'
-
-        if current_user.is_authenticated and not current_user.is_superuser:
-            logger.upd_log('User auth verified!', request=request, type=1, user=username)
-            return True, 200
-        else:
-            logger.upd_log('User auth refused!', request=request, type=1, user=username)
-            return False, 401
-
-
-class AuthClient(Resource):
-    def get(self):
-
-        if current_user.is_authenticated:
-            username = current_user.username
-        else:
-            username = 'ANONYMUS'
-
-        if current_user.is_authenticated or not request.args.get('token'):
-            logger.upd_log('Client auth refused!', request=request, type=1, user=username)
-            return False, 401
-
-        token = request.args.get("token") or None
-
-        for t in Tokens.query.all():
-            if t.token == token:
-                logger.upd_log('Client auth verified!', request=request, type=1, user=username)
-                return True, 200
-
-        logger.upd_log('Client auth refused!', request=request, type=1, user=username)
-        return False, 401
-
-
 class ClientLogin(Resource):
     def post(self):
         if current_user.is_authenticated:
@@ -841,21 +875,43 @@ class ClientLogin(Resource):
 
         if json_data['token']:
             token = str(json_data['token'])
-            #print(token)
+
         else:
             logger.upd_log('Client login refused due insufficient json data!', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Client token must be presented!'}, 400
 
         for t in Tokens.query.all():
-            #print(t.token)
             if t.token == token:
-
-                #print(t.token)
 
                 survey = Surveys.query.get(t.survey_id)
                 testbattery = Testbatteries.query.get(survey.testbattery_id)
 
-                #TODO check avaibality!
+                if not survey:
+                    logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                    return {'status': 3, 'message': 'Survey does not exists!'}, 500
+                if survey.is_archived:
+                    logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                    return {'status': 3, 'message': 'Survey is acrhived!'}, 400
+                if not survey.is_active:
+                    logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                    return {'status': 3, 'message': 'Survey in deactivated'}, 400
+
+                if not survey.is_anonymus:
+                    client = Clients.query.get(t.client_id)
+                    if not client:
+                        logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                        return {'status': 4, 'message': 'Client does not exists!'}, 400
+                    if client.is_archived:
+                        logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                        return {'status': 4, 'message': 'Client is archived!'}, 400
+
+                    result = Results.query.get(client.result_id)
+                    if not result:
+                        logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                        return {'status': 4, 'message': 'Missing result for client!'}, 400
+                    if result.status == 'completed':
+                        logger.upd_log(f'Login with token refused!', request=request, type=1, user=username)
+                        return {'status': 4, 'message': 'Survey completed!'}, 400
 
                 data = json.dumps({'survey':{
                     'title': survey.title,
@@ -864,34 +920,23 @@ class ClientLogin(Resource):
                     'testbattery': testbattery.short_name
                 }})
 
-                #response = make_response()
-
                 session['token'] = t.token
                 session['token_id'] = t.id
-                #session['id'] = uuid.uuid4()
-                print(session)
-                #response.set_cookie('token', session.get('token'))
-                #print(session)
+                session['role'] = 'client'
 
-                logger.upd_log(f'Client <{t.client_id}> logged in!', request=request, type=1, user=username)
-                #return response, 200
-                return Response(data, status=200, mimetype='application/json')
+                response = Response(data, status=200, mimetype='application/json')
+                response.set_cookie('token', session.get('token'))
+
+                if t.client_id:
+                    logger.upd_log(f'Client <{t.client_id}> logged in!', request=request, type=1, user=username)
+                else:
+                    logger.upd_log(f'Anonymus logged in to survey <{t.survey_id}>!', request=request, type=1, user=username)
+                return response
 
         logger.upd_log('Client auth refused!', request=request, type=1, user=username)
-        return False, 401
+        return {'status': 1, 'message': 'Token does not exists!'}, 401
 
 
-
-
-
-'''
-TODO add/modify endpoints:
-    - get_current_log #DONE
-    - get_archive_log
-    - GET!!! /API/auth_admin or _user or _client - 201 or 401 (gets current_user; returns is_superuser (if user returns 200 or 401))
-    - POST!!! /API/clientlogin, JSON payload: token; if anonym surv.: token must exists + token.survey is_active and not is_archived)
-    (if survey not anonym: + client.status not is_finished) -> 200 + survey.title, survey.description, tb.est_time, tb.short_name 
-'''
 
 
 api.add_resource(AddSuperuser, '/API/addsu')
@@ -924,7 +969,5 @@ api.add_resource(UpdateClient, '/API/updateclient')
 api.add_resource(Logout, '/API/logout')
 api.add_resource(ReadCurrentLog, '/API/readlog')
 api.add_resource(DownloadCurrentLog, '/API/downloadlog')
-api.add_resource(AuthAdmin, '/API/auth_admin')
-api.add_resource(AuthUser, '/API/auth_user')
-api.add_resource(AuthClient, '/API/auth_client')
+api.add_resource(Auth, '/API/auth')
 api.add_resource(ClientLogin, '/API/clientlogin')
