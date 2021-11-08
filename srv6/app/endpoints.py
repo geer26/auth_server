@@ -3,7 +3,7 @@ import os
 import uuid
 from flask_restful import Resource, reqparse
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import request, redirect, render_template, send_from_directory, send_file, session, make_response
+from flask import request, redirect, render_template, send_from_directory, send_file, session, make_response, Response
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -857,22 +857,25 @@ class ClientLogin(Resource):
 
                 #TODO check avaibality!
 
-                response = make_response( {'survey':{
+                data = json.dumps({'survey':{
                     'title': survey.title,
                     'description': survey.description,
                     'est_time': testbattery.est_time,
                     'testbattery': testbattery.short_name
-                }} )
+                }})
+
+                #response = make_response()
 
                 session['token'] = t.token
                 session['token_id'] = t.id
-                session['id'] = uuid.uuid4()
+                #session['id'] = uuid.uuid4()
                 print(session)
-                response.set_cookie('id', session.get('id'))
+                #response.set_cookie('token', session.get('token'))
                 #print(session)
 
-                logger.upd_log(f'Client <{token.client_id}> logged in!', request=request, type=1, user=username)
-                return response, 200
+                logger.upd_log(f'Client <{t.client_id}> logged in!', request=request, type=1, user=username)
+                #return response, 200
+                return Response(data, status=200, mimetype='application/json')
 
         logger.upd_log('Client auth refused!', request=request, type=1, user=username)
         return False, 401
