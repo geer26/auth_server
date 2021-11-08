@@ -7,7 +7,8 @@
 # Type: application/json
 # JSON payload: {'username': <str>, 'password': <str>}
 # Returns: 200 or 400 with message
-POST http://127.0.0.1:5001/API/addsu HTTP/1.1
+#POST http://127.0.0.1:5001/API/addsu HTTP/1.1
+POST https://kecskecsecse.tk/API/addsu HTTP/1.1
 content-type: application/json
 
 {
@@ -23,6 +24,7 @@ content-type: application/json
 # JSON payload: {'username': <str>, 'password': <str>, !'remember': <boolean>!}
 # Returns: 200 or 400 with message
 POST http://127.0.0.1:5001/API/login HTTP/1.1
+#POST https://kecskecsecse.tk/API/login HTTP/1.1
 content-type: application/json
 
 {
@@ -268,13 +270,15 @@ GET http://127.0.0.1:5001/API/logout HTTP/1.1
 ### Healthcheck
 # provides useful information - UNDER CONSTRUCTION!
 # Endpoint: /API/healthcheck
-GET http://127.0.0.1:5001/healthcheck HTTP/1.1
+#GET http://127.0.0.1:5001/healthcheck HTTP/1.1
+GET https://kecskecsecse.tk/healthcheck HTTP/1.1
 
 
 ### Read current log
 # Method: GET
 # Returns: 200 and content of the current log, OR 401 or 500
-GET http://127.0.0.1:5001/API/readlog HTTP/1.1
+#GET http://127.0.0.1:5001/API/readlog HTTP/1.1
+GET https://kecskecsecse.tk/API/readlog HTTP/1.1
 
 
 ### Download log archive - UNDER CONSTRUCTION!
@@ -305,3 +309,19 @@ GET http://127.0.0.1:5001/API/auth_user HTTP/1.1
 # Param: token
 # Returns: true, 200 or false, 401
 GET http://127.0.0.1:5001/API/auth_client?token=e3d7f6b8-3f95-11ec-a9d8-dfc8ae3fa97c HTTP/1.1
+
+
+### Login client
+# !!! UNDER CONSTRUCTION !!!
+# Updates the client data, keeps database coherency
+# Endpoint: /API/updateclient
+# Method: POST
+# Type: application/json
+# JSON payload: {"cid": <int>, !"name": <str>!, !"email": <str>!, !"is_archived": <boolean>!}
+# Returns: 200, 401 or 500 with message
+POST http://127.0.0.1:5001/API/clientlogin HTTP/1.1
+content-type: application/json
+
+{
+   "token": "e3d7f6b8-3f95-11ec-a9d8-dfc8ae3fa97c"
+}

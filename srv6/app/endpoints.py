@@ -1,8 +1,9 @@
 import json
 import os
+import uuid
 from flask_restful import Resource, reqparse
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import request, redirect, render_template, send_from_directory, send_file, session
+from flask import request, redirect, render_template, send_from_directory, send_file, session, make_response
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -288,6 +289,7 @@ class Login(Resource):
             return {'status': 1, 'message': 'User is disabled!'}, 401
 
         login_user(user, remember=remember)
+        print(session)
 
         if user.is_superuser:
             logger.upd_log(f'{user.username} logged in succesfully!', request=request, type=0, user=username)
@@ -807,7 +809,7 @@ class AuthUser(Resource):
 
 class AuthClient(Resource):
     def get(self):
-        print(session)
+
         if current_user.is_authenticated:
             username = current_user.username
         else:
@@ -826,6 +828,55 @@ class AuthClient(Resource):
 
         logger.upd_log('Client auth refused!', request=request, type=1, user=username)
         return False, 401
+
+
+class ClientLogin(Resource):
+    def post(self):
+        if current_user.is_authenticated:
+            username = current_user.username
+        else:
+            username = 'ANONYMUS'
+
+        json_data = request.get_json(force=True)
+
+        if json_data['token']:
+            token = str(json_data['token'])
+            #print(token)
+        else:
+            logger.upd_log('Client login refused due insufficient json data!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Client token must be presented!'}, 400
+
+        for t in Tokens.query.all():
+            #print(t.token)
+            if t.token == token:
+
+                #print(t.token)
+
+                survey = Surveys.query.get(t.survey_id)
+                testbattery = Testbatteries.query.get(survey.testbattery_id)
+
+                #TODO check avaibality!
+
+                response = make_response( {'survey':{
+                    'title': survey.title,
+                    'description': survey.description,
+                    'est_time': testbattery.est_time,
+                    'testbattery': testbattery.short_name
+                }} )
+
+                session['token'] = t.token
+                session['token_id'] = t.id
+                session['id'] = uuid.uuid4()
+                print(session)
+                response.set_cookie('id', session.get('id'))
+                #print(session)
+
+                logger.upd_log(f'Client <{token.client_id}> logged in!', request=request, type=1, user=username)
+                return response, 200
+
+        logger.upd_log('Client auth refused!', request=request, type=1, user=username)
+        return False, 401
+
 
 
 
@@ -873,3 +924,4 @@ api.add_resource(DownloadCurrentLog, '/API/downloadlog')
 api.add_resource(AuthAdmin, '/API/auth_admin')
 api.add_resource(AuthUser, '/API/auth_user')
 api.add_resource(AuthClient, '/API/auth_client')
+api.add_resource(ClientLogin, '/API/clientlogin')
