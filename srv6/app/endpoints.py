@@ -740,8 +740,8 @@ class UpdateClient(Resource):
             logger.upd_log(f'Client <{client.id}> succesfully updated!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Client updated succesfully!'}, 200
         else:
-            logger.upd_log(f'Client <{client.id}> update failed!', request=request, type=0, user=username)
-            return {'status': 0, 'message': f'Client update failed!'}, 500
+            logger.upd_log(f'Client <{client.id}> update failed!', request=request, type=2, user=username)
+            return {'status': 1, 'message': f'Client update failed!'}, 500
 
 
 #Documented!
@@ -761,7 +761,7 @@ class ReadCurrentLog(Resource):
             logger.upd_log('Current log served!', request=request, type=0, user=username)
             return {'status': 0, 'Log content': logcontent}, 200
         except:
-            logger.upd_log('Error while reading log content!', request=request, type=1, user=username)
+            logger.upd_log('Error while reading log content!', request=request, type=2, user=username)
             return {'status': 1, 'message': 'Error while reading logfile content!'}, 500
 
 
@@ -802,14 +802,14 @@ class Auth(Resource):
         arg = str(request.args.get('role')) or None
 
         if not arg:
-            logger.upd_log('Failed auth attempt due missing "role" argument!', request=request, type=1, user=username)
+            logger.upd_log('Failed auth attempt due missing "role" argument!', request=request, type=2, user=username)
             return {'status': 1, 'message': 'Missing role argument!'}, 400
         if not role:
-            logger.upd_log('Failed auth attempt due missing session data!', request=request, type=1, user=username)
+            logger.upd_log('Failed auth attempt due missing session data!', request=request, type=2, user=username)
             return {'status': 1, 'message': 'Missing session data!'}, 500
 
         if role == arg:
-            logger.upd_log('Authentication successful!', request=request, type=1, user=username)
+            logger.upd_log('Authentication successful!', request=request, type=0, user=username)
             return True, 200
         else:
             logger.upd_log('Authentication refused!', request=request, type=1, user=username)
@@ -830,7 +830,7 @@ class ClientLogin(Resource):
             token = str(json_data['token'])
 
         else:
-            logger.upd_log('Client login refused due insufficient json data!', request=request, type=1, user=username)
+            logger.upd_log('Client login refused due insufficient json data!', request=request, type=3, user=username)
             return {'status': 2, 'message': 'Client token must be presented!'}, 400
 
         for t in Tokens.query.all():
@@ -881,9 +881,9 @@ class ClientLogin(Resource):
                 response.set_cookie('token', session.get('token'))
 
                 if t.client_id:
-                    logger.upd_log(f'Client <{t.client_id}> logged in!', request=request, type=1, user=username)
+                    logger.upd_log(f'Client <{t.client_id}> logged in!', request=request, type=0, user=username)
                 else:
-                    logger.upd_log(f'Anonymus logged in to survey <{t.survey_id}>!', request=request, type=1, user=username)
+                    logger.upd_log(f'Anonymus logged in to survey <{t.survey_id}>!', request=request, type=0, user=username)
                 return response
 
         logger.upd_log('Client auth refused!', request=request, type=1, user=username)
