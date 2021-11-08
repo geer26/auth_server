@@ -4,7 +4,6 @@ from zipfile import ZipFile
 from os import listdir, path, stat, rename, remove, mkdir
 from datetime import datetime, timedelta
 
-from flask_login import current_user
 
 class Logger():
 

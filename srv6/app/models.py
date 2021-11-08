@@ -102,7 +102,6 @@ class Testbatteries(db.Model):
             'requirements': self.requirements,
             'estimated time': self.est_time
             }
-        #print(f'data: {data}')
         return data
 
 

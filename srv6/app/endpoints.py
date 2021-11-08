@@ -1,9 +1,8 @@
 import json
 import os
-import uuid
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 from flask_login import current_user, login_user, logout_user
-from flask import request, render_template, send_from_directory, session, make_response, Response
+from flask import request, render_template, send_from_directory, session, Response
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -781,7 +780,7 @@ class DownloadCurrentLog(Resource):
         try:
             path = os.path.join(logger.folder)
             filename = logger.archive_name
-            print(f'PATH: {path}, FILENAME: {filename}')
+            #print(f'PATH: {path}, FILENAME: {filename}')
             logger.upd_log('Archive logfile downloaded', request=request, type=0, user=current_user.username)
             return send_from_directory(path, filename=logger.archive_name), 200
         except:
