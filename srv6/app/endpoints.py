@@ -889,6 +889,39 @@ class ClientLogin(Resource):
         return {'status': 1, 'message': 'Token does not exists!'}, 401
 
 
+class FrontendLog(Resource):
+    def post(self):
+        print(session)
+        if current_user.is_authenticated:
+            username = current_user.username
+        elif session['role'] == 'client':
+            client_id = Tokens.query.get(int(session['token_id'])).client_id
+            survey_id = Tokens.query.get(int(session['token_id'])).survey_id
+            if client_id:
+                #client = Clients.query.get(client_id)
+                username = f'Client <{client_id}> for Survey <{survey_id}>'
+            else:
+                username = f'Anonymus for Survey <{survey_id}>'
+        else:
+            username = 'ANONYMUS'
+            logger.upd_log('Logging refused!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Must be logged in!'}, 401
+
+        json_data = request.get_json(force=True)
+
+        type = int(json_data['type']) or 0
+
+        if not json_data['message']:
+            logger.upd_log('Logging failed due lack of message!', request=request, type=2, user=username)
+            return {'status': 2, 'message': 'Message must be presented!'}, 500
+
+
+        logger.upd_log(str(json_data['message']), request=request, type=type, user=username)
+        return {'status': 0, 'message': 'Logged!'}, 200
+
+
+
+
 
 
 api.add_resource(AddSuperuser, '/API/addsu')
@@ -923,3 +956,4 @@ api.add_resource(ReadCurrentLog, '/API/readlog')
 api.add_resource(DownloadCurrentLog, '/API/downloadlog')
 api.add_resource(Auth, '/API/auth')
 api.add_resource(ClientLogin, '/API/clientlogin')
+api.add_resource(FrontendLog, '/API/log')
