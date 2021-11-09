@@ -45,7 +45,7 @@ class Logger():
             files = listdir(self.folder)
 
         logfile_path = path.join(self.folder, self.name)
-        archive_path = path.join(self.folder, self.archive_name)
+        #archive_path = path.join(self.folder, self.archive_name)
 
         # check if logfile exists, if not, create it
         if self.name not in files:
@@ -56,10 +56,12 @@ class Logger():
             return 0
 
         # check if archive exists, if not, create it
+        '''
         if self.archive_name not in files:
             with ZipFile(archive_path, 'w') as archive:
                 pass
             return 0
+        '''
 
         # check if logfile reached sizelimit, linelimit or timedelta limit, if so archive it and recall itself
 
@@ -135,19 +137,23 @@ class Logger():
         Archive a living logfile with an incremented counter in name
         :return: None
         """
-        files = listdir(self.folder)
+        #files = listdir(self.folder)
         logfile_path = path.join(self.folder, self.name)
-        archive_path = path.join(self.folder, self.archive_name)
+        #archive_path = path.join(self.folder, self.archive_name)
 
+        '''
         with ZipFile(archive_path, 'r') as archive:
             filecount = len(archive.infolist())
+        '''
 
-        new_path = path.join(self.folder, f'archive_{filecount + 1}_{datetime.now().strftime("%Y-%m-%d")}')
+        new_path = path.join(self.folder, f'archive_{datetime.now().strftime("%Y-%m-%d")}')
         rename(logfile_path, new_path)
 
+        '''
         with ZipFile(logfile_path, 'a') as archive:
             archive.write(new_path, basename(new_path))
         remove(new_path)
+        '''
 
         remove(logfile_path)
 
