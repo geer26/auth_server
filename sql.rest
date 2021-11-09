@@ -305,8 +305,8 @@ GET http://127.0.0.1:5001/API/auth?role=client
 # Type: application/json
 # JSON payload: {"token": <token>}
 # Returns: 200, 401 or 500 with message
-#POST http://127.0.0.1:5001/API/clientlogin HTTP/1.1
-POST https://kecskecsecse.tk/API/clientlogin HTTP/1.1
+POST http://127.0.0.1:5001/API/clientlogin HTTP/1.1
+#POST https://kecskecsecse.tk/API/clientlogin HTTP/1.1
 content-type: application/json
 
 {
@@ -316,13 +316,14 @@ content-type: application/json
 
 ### Log from frontend
 # Enables logging from frontend side
+# Must be logged in as admin, user or client!
 # Endpoint: /API/log
 # Method: POST
 # Type: application/json
 # JSON payload: {"message": <str>, !"type": <int>!}
 # Returns: 200, 401 or 500 with message
-POST http://127.0.0.1:5001/API/log HTTP/1.1
-#POST https://kecskecsecse.tk/API/log HTTP/1.1
+#POST http://127.0.0.1:5001/API/log HTTP/1.1
+POST https://kecskecsecse.tk/API/log HTTP/1.1
 content-type: application/json
 
 {

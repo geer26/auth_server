@@ -149,6 +149,10 @@ class Logger():
             archive.write(new_path, basename(new_path))
         remove(new_path)
 
+        remove(logfile_path)
+
+        self.check()
+
         return
 
 
