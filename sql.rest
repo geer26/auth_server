@@ -23,8 +23,8 @@ content-type: application/json
 # Type: application/json
 # JSON payload: {'username': <str>, 'password': <str>, !'remember': <boolean>!}
 # Returns: 200 or 400 with message
-#POST http://127.0.0.1:5001/API/login HTTP/1.1
-POST https://kecskecsecse.tk/API/login HTTP/1.1
+POST http://127.0.0.1:5001/API/login HTTP/1.1
+#POST https://kecskecsecse.tk/API/login HTTP/1.1
 content-type: application/json
 
 {
@@ -271,8 +271,8 @@ GET http://127.0.0.1:5001/API/logout HTTP/1.1
 ### Healthcheck
 # provides useful information - UNDER CONSTRUCTION!
 # Endpoint: /API/healthcheck
-#GET http://127.0.0.1:5001/healthcheck HTTP/1.1
-GET https://kecskecsecse.tk/healthcheck HTTP/1.1
+GET http://127.0.0.1:5001/healthcheck HTTP/1.1
+#GET https://kecskecsecse.tk/healthcheck HTTP/1.1
 
 
 ### Read current log
@@ -310,23 +310,9 @@ POST http://127.0.0.1:5001/API/clientlogin HTTP/1.1
 content-type: application/json
 
 {
-   "token": "e3d7f6b8-3f95-11ec-a9d8-dfc8ae3fa97c"
+   "token": "e3b33eee-3f2c-11ec-94bd-8dd70611b6bb"
 }
 
 
-### Log from frontend
-# Enables logging from frontend side
-# Must be logged in as admin, user or client!
-# Endpoint: /API/log
-# Method: POST
-# Type: application/json
-# JSON payload: {"message": <str>, !"type": <int>!}
-# Returns: 200, 401 or 500 with message
-#POST http://127.0.0.1:5001/API/log HTTP/1.1
-POST https://kecskecsecse.tk/API/log HTTP/1.1
-content-type: application/json
-
-{
-    "message": "Put this into logfile!",
-    "type": 1
-}
+### Read sessionlist
+GET http://127.0.0.1:5001/API/sessionlist HTTP/1.1

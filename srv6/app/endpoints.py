@@ -3,7 +3,7 @@ import os
 from flask_restful import Resource
 from flask_login import current_user, login_user, logout_user
 from flask import request, render_template, send_from_directory, session, Response
-from app import api, logger, db
+from app import api, logger, db, session_handler
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
     clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client, \
@@ -30,6 +30,8 @@ class Logout(Resource):
         }})
 
         logout_user()
+        if session_handler.check_on_list(session):
+            session_handler.remove_from_list(session)
         session.clear()
         response = Response(data, status=200, mimetype='application/json')
         response.delete_cookie('token')
@@ -298,10 +300,14 @@ class Login(Resource):
 
         login_user(user, remember=remember)
         if user.is_superuser:
+            session_handler.update_expiration(session)
             session['role'] = 'admin'
         elif not user.is_superuser:
+            session_handler.update_expiration(session)
             session['role'] = 'user'
-        #print(session)
+        print(session)
+
+        session_handler.add_to_list(session)
 
         if user.is_superuser:
             logger.upd_log(f'{user.username} logged in succesfully!', request=request, type=0, user=username)
@@ -877,6 +883,9 @@ class ClientLogin(Resource):
                 session['token_id'] = t.id
                 session['role'] = 'client'
 
+                session_handler.update_expiration(session)
+                session_handler.add_to_list(session)
+
                 response = Response(data, status=200, mimetype='application/json')
                 response.set_cookie('token', session.get('token'))
 
@@ -922,6 +931,11 @@ class FrontendLog(Resource):
         return {'status': 0, 'message': 'Logged!'}, 200
 
 
+class ListSessions(Resource):
+    def get(self):
+        return session_handler.return_all(), 200
+
+
 
 
 
@@ -959,3 +973,4 @@ api.add_resource(DownloadCurrentLog, '/API/downloadlog')
 api.add_resource(Auth, '/API/auth')
 api.add_resource(ClientLogin, '/API/clientlogin')
 api.add_resource(FrontendLog, '/API/log')
+api.add_resource(ListSessions, '/API/sessionlist')

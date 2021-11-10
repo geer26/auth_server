@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json
 
 class Sess():
 
@@ -9,12 +10,13 @@ class Sess():
 
 
     def remove_from_list(self, session):
-        pass
+        self.sessionlist.remove(session)
+        return True
 
 
     def add_to_list(self, session):
         session['expiration'] = datetime.now() + timedelta(seconds=self.timeout)
-        self.list.append(session)
+        self.sessionlist.append(session)
         return True
 
 
@@ -44,5 +46,9 @@ class Sess():
 
     def renew_timeout(self, session):
         pass
+
+
+    def return_all(self):
+        return json.dumps(self.sessionlist)
 
 
