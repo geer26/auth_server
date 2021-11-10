@@ -66,6 +66,7 @@ class Healthcheck(Resource):
         else:
             username = 'ANONYMUS'
 
+        print(session)
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
         return sysinfo(), 200
 
@@ -889,6 +890,7 @@ class ClientLogin(Resource):
         return {'status': 1, 'message': 'Token does not exists!'}, 401
 
 
+#Documented
 class FrontendLog(Resource):
     def post(self):
         print(session)
