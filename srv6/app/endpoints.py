@@ -69,6 +69,7 @@ class Healthcheck(Resource):
             username = 'ANONYMUS'
 
         print(session)
+        print(f'CURRENT_USER: {current_user.username}')
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
         return sysinfo(), 200
 
@@ -305,6 +306,7 @@ class Login(Resource):
         elif not user.is_superuser:
             session_handler.update_expiration(session)
             session['role'] = 'user'
+        session['_id'] = _create_identifier()
         print(session)
 
         session_handler.add_to_list(session)

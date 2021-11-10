@@ -16,7 +16,7 @@ class Sess():
 
     def add_to_list(self, session):
         session['expiration'] = datetime.now() + timedelta(seconds=self.timeout)
-        self.sessionlist.append(session)
+        self.sessionlist.append(str(session['_id']))
         return True
 
 
@@ -27,7 +27,7 @@ class Sess():
 
 
     def check_expired(self, session):
-        if 'expirqtion' not in session.keys():
+        if 'expiration' not in session.keys():
             return False
         if datetime.now() > session['expiration']:
             return False
