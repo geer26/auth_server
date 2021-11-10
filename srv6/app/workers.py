@@ -5,7 +5,8 @@ import platform
 #from random import SystemRandom
 from app import db, logger, secret, start_time
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
-#from flask import request
+from flask import request
+from hashlib import sha512
 
 
 def get_uptime():
@@ -453,15 +454,21 @@ def upd_client(data, client):
     return True
 
 
-'''
+
 def _create_identifier():
+
+    address = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if address is not None:
+        # An 'X-Forwarded-For' header includes a comma separated list of the
+        # addresses, the first address being the actual remote address.
+        address = address.encode('utf-8').split(b',')[0].strip()
+
     user_agent = request.headers.get('User-Agent')
     if user_agent is not None:
         user_agent = user_agent.encode('utf-8')
-    base = '{0}|{1}|{2}'.format(_get_remote_addr(), user_agent, datetime.now().timestamp())
+    base = '{0}|{1}|{2}'.format(address, user_agent, datetime.now().timestamp())
     if str is bytes:
-        base = text_type(base, 'utf-8', errors='replace')  # pragma: no cover
+        base = str(base, 'utf-8', errors='replace')  # pragma: no cover
     h = sha512()
     h.update(base.encode('utf8'))
     return h.hexdigest()
-'''

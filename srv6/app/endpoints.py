@@ -7,7 +7,7 @@ from app import api, logger, db, session_handler
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
     clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client, \
-    get_uptime, sysinfo
+    get_uptime, sysinfo, _create_identifier
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -879,7 +879,7 @@ class ClientLogin(Resource):
                     'testbattery': testbattery.short_name
                 }})
 
-                session['_id'] = current_app.login_manager._session_identifier_generator()
+                session['_id'] = _create_identifier()
                 session['token'] = t.token
                 session['token_id'] = t.id
                 session['role'] = 'client'
