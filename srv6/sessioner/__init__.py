@@ -16,7 +16,7 @@ class Sess():
 
     def add_to_list(self, session):
         session['expiration'] = datetime.now() + timedelta(seconds=self.timeout)
-        self.sessionlist.append(str(session['_id']))
+        self.sessionlist.append(session)
         return True
 
 
@@ -49,6 +49,9 @@ class Sess():
 
 
     def return_all(self):
-        return json.dumps(self.sessionlist)
+        session_ids = []
+        for s in self.sessionlist:
+            session_ids.append(s['_id'])
+        return session_ids
 
 
