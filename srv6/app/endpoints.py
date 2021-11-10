@@ -2,7 +2,7 @@ import json
 import os
 from flask_restful import Resource
 from flask_login import current_user, login_user, logout_user
-from flask import request, render_template, send_from_directory, session, Response
+from flask import request, render_template, send_from_directory, session, Response, current_app
 from app import api, logger, db, session_handler
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -879,6 +879,7 @@ class ClientLogin(Resource):
                     'testbattery': testbattery.short_name
                 }})
 
+                session['_id'] = current_app.login_manager._session_identifier_generator()
                 session['token'] = t.token
                 session['token_id'] = t.id
                 session['role'] = 'client'

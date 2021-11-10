@@ -5,6 +5,7 @@ import platform
 #from random import SystemRandom
 from app import db, logger, secret, start_time
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
+#from flask import request
 
 
 def get_uptime():
@@ -450,3 +451,17 @@ def upd_client(data, client):
     except:
         return False
     return True
+
+
+'''
+def _create_identifier():
+    user_agent = request.headers.get('User-Agent')
+    if user_agent is not None:
+        user_agent = user_agent.encode('utf-8')
+    base = '{0}|{1}|{2}'.format(_get_remote_addr(), user_agent, datetime.now().timestamp())
+    if str is bytes:
+        base = text_type(base, 'utf-8', errors='replace')  # pragma: no cover
+    h = sha512()
+    h.update(base.encode('utf8'))
+    return h.hexdigest()
+'''
