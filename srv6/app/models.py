@@ -21,6 +21,8 @@ class Users(UserMixin, db.Model):
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     is_superuser = db.Column(db.Boolean, nullable=False, default=False)
     is_enabled = db.Column(db.Boolean, nullable=False, default=True)
+    authenticated = db.Column(db.Boolean, nullable=False, default=False)
+    expiration = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return f'<Username: {self.username}> <is superuser:{self.is_superuser}>'
@@ -117,6 +119,8 @@ class Surveys(db.Model):
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     email_body = db.Column(db.String(), nullable=True)  # enc, editable
     testbattery_id = db.Column(db.Integer, db.ForeignKey('testbatteries.id'))
+    authenticated = db.Column(db.Boolean, nullable=False, default=False)
+    expiration = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return f'<title: {self.title}> <email_body: {self.email_body}>'
@@ -185,6 +189,8 @@ class Clients(db.Model):
     last_modified_at = db.Column(db.Date(), default=datetime.now(), nullable=False)
     result_id = db.Column(db.Integer, db.ForeignKey('results.id'))
     survey_id = db.Column(db.Integer, db.ForeignKey('surveys.id'))
+    authenticated = db.Column(db.Boolean, nullable=False, default=False)
+    expiration = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return f'<id: {self.id}> <name: {self.name}>'
