@@ -271,8 +271,8 @@ GET http://127.0.0.1:5001/API/logout HTTP/1.1
 ### Healthcheck
 # provides useful information - UNDER CONSTRUCTION!
 # Endpoint: /API/healthcheck
-GET http://127.0.0.1:5001/healthcheck HTTP/1.1
-#GET https://kecskecsecse.tk/healthcheck HTTP/1.1
+#GET http://127.0.0.1:5001/healthcheck HTTP/1.1
+GET https://kecskecsecse.tk/healthcheck HTTP/1.1
 
 
 ### Read current log
