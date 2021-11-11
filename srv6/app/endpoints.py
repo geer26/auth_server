@@ -2,7 +2,7 @@ import json
 import os
 from flask_restful import Resource
 from flask_login import current_user, login_user, logout_user
-from flask import request, render_template, send_from_directory, session, Response, current_app
+from flask import request, render_template, send_from_directory, session, Response
 from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
@@ -30,10 +30,6 @@ class Logout(Resource):
         }})
 
         logout_user()
-        '''
-        if session_handler.check_on_list(session):
-            session_handler.remove_from_list(session)
-        '''
 
         session.clear()
         response = Response(data, status=200, mimetype='application/json')
@@ -126,7 +122,6 @@ class ChangeEnable(Resource):
             username = 'ANONYMUS'
 
         json_data = request.get_json(force=True)
-        #print(json_data)
 
         if not current_user.is_authenticated or not current_user.is_superuser:
             logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
@@ -304,15 +299,10 @@ class Login(Resource):
 
         login_user(user, remember=remember)
         if user.is_superuser:
-            #session_handler.update_expiration(session)
             session['role'] = 'admin'
         elif not user.is_superuser:
-            #session_handler.update_expiration(session)
             session['role'] = 'user'
         session['_id'] = _create_identifier()
-        print(session)
-
-        session_handler.add_to_list(session)
 
         if user.is_superuser:
             logger.upd_log(f'{user.username} logged in succesfully!', request=request, type=0, user=username)
@@ -777,7 +767,7 @@ class ReadCurrentLog(Resource):
 
 
 #Documented!
-#TODO finish or test
+#TODO finish and test
 class DownloadCurrentLog(Resource):
     def get(self):
         if current_user.is_authenticated:
@@ -889,11 +879,6 @@ class ClientLogin(Resource):
                 session['token_id'] = t.id
                 session['role'] = 'client'
 
-                '''
-                session_handler.update_expiration(session)
-                session_handler.add_to_list(session)
-                '''
-
                 response = Response(data, status=200, mimetype='application/json')
                 response.set_cookie('token', session.get('token'))
 
@@ -910,14 +895,13 @@ class ClientLogin(Resource):
 #Documented
 class FrontendLog(Resource):
     def post(self):
-        print(session)
+
         if current_user.is_authenticated:
             username = current_user.username
         elif session['role'] == 'client':
             client_id = Tokens.query.get(int(session['token_id'])).client_id
             survey_id = Tokens.query.get(int(session['token_id'])).survey_id
             if client_id:
-                #client = Clients.query.get(client_id)
                 username = f'Client <{client_id}> for Survey <{survey_id}>'
             else:
                 username = f'Anonymus for Survey <{survey_id}>'
@@ -937,12 +921,6 @@ class FrontendLog(Resource):
 
         logger.upd_log(str(json_data['message']), request=request, type=type, user=username)
         return {'status': 0, 'message': 'Logged!'}, 200
-
-'''
-class ListSessions(Resource):
-    def get(self):
-        return session_handler.return_all(), 200
-'''
 
 
 
@@ -981,4 +959,3 @@ api.add_resource(DownloadCurrentLog, '/API/downloadlog')
 api.add_resource(Auth, '/API/auth')
 api.add_resource(ClientLogin, '/API/clientlogin')
 api.add_resource(FrontendLog, '/API/log')
-#api.add_resource(ListSessions, '/API/sessionlist')

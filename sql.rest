@@ -28,8 +28,8 @@ POST http://127.0.0.1:5001/API/login HTTP/1.1
 content-type: application/json
 
 {
-    "username": "superuser",
-    "password": "123456aA",
+    "username": "kunbela",
+    "password": "1234567aA",
     "remember": false
 }
 
@@ -312,7 +312,3 @@ content-type: application/json
 {
    "token": "e3b33eee-3f2c-11ec-94bd-8dd70611b6bb"
 }
-
-
-### Read sessionlist
-GET http://127.0.0.1:5001/API/sessionlist HTTP/1.1
