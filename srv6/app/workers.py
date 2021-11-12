@@ -2,6 +2,7 @@ import json
 import uuid
 from datetime import datetime
 import platform
+import string
 #from random import SystemRandom
 from app import db, logger, secret, start_time
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
@@ -474,4 +475,14 @@ def _create_identifier():
 
 
 def pw_complexity(pw):
-    return True
+    pw_ok = True
+
+    cahrs = pw.split('')
+
+
+    #if
+
+    if pw_ok:
+        return True
+    else:
+        return False
