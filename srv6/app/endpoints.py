@@ -67,7 +67,7 @@ class Healthcheck(Resource):
         else:
             username = 'ANONYMUS'
 
-        print(session)
+        #print(session)
         #print(f'CURRENT_USER: {current_user.username}')
         logger.upd_log('HEALTHCHECK served', request=request, type=0, user=username)
         return sysinfo(), 200
