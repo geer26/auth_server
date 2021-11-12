@@ -23,13 +23,13 @@ content-type: application/json
 # Type: application/json
 # JSON payload: {'username': <str>, 'password': <str>, !'remember': <boolean>!}
 # Returns: 200 or 400 with message
-POST http://127.0.0.1:5001/API/login HTTP/1.1
-#POST https://kecskecsecse.tk/API/login HTTP/1.1
+#POST http://127.0.0.1:5001/API/login HTTP/1.1
+POST https://kecskecsecse.tk/API/login HTTP/1.1
 content-type: application/json
 
 {
-    "username": "kunbela",
-    "password": "1234567aA",
+    "username": "superuser",
+    "password": "123456aA",
     "remember": false
 }
 
@@ -40,15 +40,16 @@ content-type: application/json
 # Type: application/json
 # JSON payload: {"username": <str>, "password": <str>, "email": <str>, "is_enabled": <boolean>, "is_superuser": <boolean>}
 # Returns: 200, 401 or 500 with message
-POST http://127.0.0.1:5001/API/adduser HTTP/1.1
+#POST http://127.0.0.1:5001/API/adduser HTTP/1.1
+POST https://kecskecsecse.tk/API/adduser HTTP/1.1
 content-type: application/json
 
 {
-    "username": "su2",
-    "password": "123456aA",
-    "email": "noa@gmail.com",
+    "username": "kunbela",
+    "password": "1234567aA",
+    "email": "kunbela@mail.com",
     "is_enabled": true,
-    "is_superuser": true
+    "is_superuser": false
 }
 
 
@@ -91,14 +92,15 @@ content-type: application/json
 # Type: application/json
 # JSON payload: {"short name": <str>, "name": <str>, "description": <str>, "user_id": <int>}
 # Returns: 200, 401 or 500 with message
-POST http://127.0.0.1:5001/API/addbattery HTTP/1.1
+#POST http://127.0.0.1:5001/API/addbattery HTTP/1.1
+POST https://kecskecsecse.tk/API/addbattery HTTP/1.1
 Content-Type: application/json
 
 {
     "short_name": "proba-battery",
     "name": "Tesztcsomag, alapvető funkciók tesztelésére",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    "user_id": 7
+    "user_id": 2
 }
 
 
@@ -143,16 +145,17 @@ content-type: application/json
 # Type: application/json
 # JSON payload: {"tbid": <int>, "title": <str>, "email_body": <str>, "is_anonymus": <boolean>, "is_active": <boolean>, "is_archived": <boolean>}
 # Returns: 200, 401 or 500 with message
-POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
+#POST http://127.0.0.1:5001/API/addsurvey HTTP/1.1
+POST https://kecskecsecse.tk/API/addsurvey HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Egy nevesített felmérés",
-    "is_anonymus": false,
+    "title": "Egy névtelen felmérés",
+    "is_anonymus": true,
     "is_active": true,
     "is_archived": false,
     "email_body": "A köremail szövege",
-    "tbid": 9
+    "tbid": 1
 }
 
 
@@ -198,14 +201,15 @@ content-type: application/json
 # Type: application/json
 # JSON payload: {"name": <str>, "email": <str>, "is_archived": <boolean>, "survey_is": <int>}
 # Returns: 200, 401 or 500 with message
-POST http://127.0.0.1:5001/API/addclient HTTP/1.1
+#POST http://127.0.0.1:5001/API/addclient HTTP/1.1
+POST https://kecskecsecse.tk/API/addclient HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Aladár",
-    "email": "aladar@email.com",
+    "name": "Béla",
+    "email": "bela@email.com",
     "is_archived": false,
-    "survey_id": 33
+    "survey_id": 1
 }
 
 
@@ -311,4 +315,21 @@ content-type: application/json
 
 {
    "token": "e3b33eee-3f2c-11ec-94bd-8dd70611b6bb"
+}
+
+
+### Change password
+# Changes password by admin by force or by user with old password verification
+# Endpoint: /API/change_password
+# Method: POST
+# Type: application/json
+# JSON payload: {"pw": <str>, "uid": <int>} as admin OR {"pw": <str>, "pw_again": <str>, "old_password": <str>} as user
+# Returns: 200, 401 or 406 with message
+POST http://127.0.0.1:5001/API/change_password HTTP/1.1
+#POST https://kecskecsecse.tk/API/change_password HTTP/1.1
+content-type: application/json
+
+{
+   "pw": "kecskecseverescsecse",
+   "uid": 2
 }

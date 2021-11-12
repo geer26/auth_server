@@ -7,7 +7,7 @@ from app import api, logger, db
 from app.workers import add_superuser, add_user, addsu, get_admindata, del_user, \
     change_key, add_battery, del_battery, add_survey, del_survey, add_client, del_client, \
     clean_database, upd_user, upd_testbattery, get_relevant_data, upd_survey, upd_client, \
-    get_uptime, sysinfo, _create_identifier
+    get_uptime, sysinfo, _create_identifier, pw_complexity
 from app.models import Users, Testbatteries, Surveys, Results, Clients, Tokens
 
 
@@ -172,6 +172,7 @@ class AdmindataHtml(Resource):
         return {'status': 0, 'html': html}
 
 
+#Documented!
 class ChangePassword(Resource):
     def post(self):
 
@@ -182,20 +183,62 @@ class ChangePassword(Resource):
 
         json_data = request.get_json(force=True)
 
-        if not current_user.is_authenticated or not current_user.is_superuser:
-            logger.upd_log('API endpoint serve refused', request=request, type=1, user=username)
-            return {'status': 1, 'message': 'Must be logged in as superuser!'}, 401
-        #print(request.json)
         pw = str(json_data['pw'])
-        #TODO check pw complexity
+
+        if 'old_password' in json_data.keys() and 'pw_again' in json_data.keys():
+            if not current_user.is_authenticated:
+                logger.upd_log('Unauthenticated password change refused!', request=request, type=1, user=username)
+                return {'status': 1, 'message': 'Authentication failed!'}, 401
+
+            old_password = str(json_data['old_password'])
+            new_pw2 = (json_data['pw_again'])
+
+            #check pw complexity
+            if not pw_complexity(pw):
+                logger.upd_log('Password change refused due lack of password complexity!', request=request, type=1, user=username)
+                return {'status': 2, 'message': 'Password to simple!'}, 406
+
+            #check password match
+            if pw != new_pw2:
+                logger.upd_log('Password change refused due password unmatch!', request=request, type=1, user=username)
+                return {'status': 2, 'message': 'Passwords does not match!'}, 406
+
+            #check old password
+            if not current_user.check_password(old_password):
+                logger.upd_log('Password change refused due invalid old password!', request=request, type=1, user=username)
+                return {'status': 2, 'message': 'Invalid old password!'}, 406
+
+            current_user.set_password(pw)
+            db.session.commit()
+            logger.upd_log('Password changed successfuly!', request=request, type=1, user=username)
+            return {'status': 0, 'message': 'Password changed!'}, 200
+
+        if not current_user.is_authenticated or not current_user.is_superuser:
+            logger.upd_log('API endpoint serve refused', request=request, type=0, user=username)
+            return {'status': 1, 'message': 'Must be logged in as superuser!'}, 401
+
+        #check if user selected
+        if 'uid' not in json_data.keys():
+            logger.upd_log('Password change refused due lack of user selection!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Missing user ID!'}, 406
+
+        #check pw complexity
+        if not pw_complexity(pw):
+            logger.upd_log('Password change refused due lack of password complexity!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Password to simple!'}, 406
+
         #change password here!!!
-        user = current_user
+        user = Users.query.get(int(json_data['uid']))
+
+        if not user:
+            logger.upd_log('Password change refused due missing user!', request=request, type=1, user=username)
+            return {'status': 2, 'message': 'Missing user!'}, 406
 
         user.set_password( pw )
         db.session.commit()
 
-        logger.upd_log('API endpoint served', request=request, type=0, user=username)
-        return {}, 200
+        logger.upd_log('Password overwritten by admin successfuly!', request=request, type=0, user=username)
+        return {'status': 0, 'message': 'Password changed!'}, 200
 
 
 #Documented!
@@ -921,6 +964,7 @@ class FrontendLog(Resource):
 
         logger.upd_log(str(json_data['message']), request=request, type=type, user=username)
         return {'status': 0, 'message': 'Logged!'}, 200
+
 
 
 

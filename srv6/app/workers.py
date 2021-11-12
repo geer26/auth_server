@@ -454,7 +454,6 @@ def upd_client(data, client):
     return True
 
 
-
 def _create_identifier():
 
     address = request.headers.get('X-Forwarded-For', request.remote_addr)
@@ -472,3 +471,7 @@ def _create_identifier():
     h = sha512()
     h.update(base.encode('utf8'))
     return h.hexdigest()
+
+
+def pw_complexity(pw):
+    return True
