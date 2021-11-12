@@ -83,12 +83,16 @@ class AddSuperuser(Resource):
 
         json_data = request.get_json(force=True)
 
+        if not pw_complexity(str(json_data['password'])):
+            logger.upd_log(f'Password to simple!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Password to simple, adding superuser failed!'}, 400
+
         if addsu(str(json_data['username']), str(json_data['password'])):
             logger.upd_log(f'Superuser <{str(json_data["username"])}> added!', request=request, type=0, user=username)
             return {'status': 0, 'message': f'Superuser <{str(json_data["username"])}> added!'}, 200
         else:
             logger.upd_log(f'Superuser exists, adding failed!', request=request, type=0, user=username)
-            return {'status': 0, 'message': 'Superuser exists, adding failed!'}, 400
+            return {'status': 1, 'message': 'Superuser exists, adding failed!'}, 400
 
 
 #Documented!
@@ -420,6 +424,10 @@ class Adduser(Resource):
         if not current_user.is_authenticated or not current_user.is_superuser:
             logger.upd_log('Adding user refused', request=request, type=1, user=username)
             return {'status': 2, 'message': 'Must be logged in as superuser!'}, 401
+
+        if not pw_complexity(str(json_data['password'])):
+            logger.upd_log(f'Password to simple!', request=request, type=1, user=username)
+            return {'status': 1, 'message': 'Password to simple, adding user failed!'}, 400
 
         if add_user(json_data):
             logger.upd_log(f'User <{json_data["username"]}> by {username} added!', request=request, type=0, user=username)
