@@ -30,6 +30,18 @@ class Logout(Resource):
         }})
 
         logout_user()
+        if session['role'] == 'admin' or session['role'] == 'user':
+            user.authenticated = False
+            user.expiration = 0
+            db.session.commit()
+        else:
+            t_id = session['token_id']
+            token = Tokens.query.get(int(t_id))
+            if token.client_id:
+                client = Clients.query.get(int(token.client_id))
+                client.authenticated = False
+                client.expiration = 0
+                db.session.commit()
 
         session.clear()
         response = Response(data, status=200, mimetype='application/json')
@@ -137,8 +149,9 @@ class ChangeEnable(Resource):
         except:
             return {'error_code': 1, 'message': 'Internal server error!'}, 500
 
-        if user.is_enabled: user.is_enabled = False
-        else: user.is_enabled = True
+        #if user.is_enabled: user.is_enabled = False
+        #else: user.is_enabled = True
+        user.is_enabled = operator.not_(user.is_enabled)
         db.session.commit()
 
         try:
@@ -345,6 +358,10 @@ class Login(Resource):
             return {'status': 1, 'message': 'User is disabled!'}, 401
 
         login_user(user, remember=remember)
+        user.authenticated = True
+        user.expiration = int(datetime.now().timedelta(seconds=app.config['LOGIN_EXP_TIME']))
+        db.session.commit()
+
         if user.is_superuser:
             session['role'] = 'admin'
         elif not user.is_superuser:
@@ -934,8 +951,15 @@ class ClientLogin(Resource):
                 response.set_cookie('token', session.get('token'))
 
                 if t.client_id:
+                    client = Clients.query.get(int(t.client_id))
+                    client.authenticated = True
+                    client.expiration = int(datetime.now().timedelta(seconds=app.config['LOGIN_EXP_TIME']))
+                    db.session.commit()
                     logger.upd_log(f'Client <{t.client_id}> logged in!', request=request, type=0, user=username)
                 else:
+                    #survey.authenticated = True
+                    #survey.expiration = int(datetime.now().timedelta(seconds=app.config['LOGIN_EXP_TIME']))
+                    #db.session.commit()
                     logger.upd_log(f'Anonymus logged in to survey <{t.survey_id}>!', request=request, type=0, user=username)
                 return response
 

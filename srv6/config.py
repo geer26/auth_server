@@ -11,6 +11,7 @@ class Config(object):
     SESSION_COOKIE_NAME = os.environ.get('SESSION_COOKIE_NAME') or '!Opt2021!'
     COOKIE_LIFESPAN = os.environ.get('SESSION_LIFESPAN') or 60 * 60 * 24 * 30
     ENV_FOLDER = basedir
+    LOGIN_EXP_TIME = 3600
 
     # ----------STATICS & TEMPLATES
     STATIC_FOLDER = 'static'
