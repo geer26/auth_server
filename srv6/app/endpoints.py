@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from flask_restful import Resource
 from flask_login import current_user, login_user, logout_user
 from flask import request, render_template, send_from_directory, session, Response
@@ -29,11 +30,11 @@ class Logout(Resource):
             'message': 'Logged out!'
         }})
 
-        logout_user()
         if session['role'] == 'admin' or session['role'] == 'user':
-            user.authenticated = False
-            user.expiration = 0
+            current_user.authenticated = False
+            current_user.expiration = 0
             db.session.commit()
+            logout_user()
         else:
             t_id = session['token_id']
             token = Tokens.query.get(int(t_id))
@@ -358,8 +359,8 @@ class Login(Resource):
             return {'status': 1, 'message': 'User is disabled!'}, 401
 
         login_user(user, remember=remember)
-        user.authenticated = True
-        user.expiration = int(datetime.now().timedelta(seconds=app.config['LOGIN_EXP_TIME']))
+        #user.authenticated = True
+        #user.expiration = int(datetime.now().timedelta(seconds=app.config['LOGIN_EXP_TIME']))
         db.session.commit()
 
         if user.is_superuser:

@@ -477,12 +477,4 @@ def _create_identifier():
 def pw_complexity(pw):
     pw_ok = True
 
-    chars = pw.split('')
-
-
-    #if
-
-    if pw_ok:
-        return True
-    else:
-        return False
+    return pw_ok
