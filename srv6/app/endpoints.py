@@ -1004,7 +1004,7 @@ class FrontendLog(Resource):
 
 
 api.add_resource(AddSuperuser, '/API/addsu')
-api.add_resource(Healthcheck, '/healthcheck')
+api.add_resource(Healthcheck, '/API/healthcheck')
 api.add_resource(GetAPIDocu, '/getdocu')
 api.add_resource(Admindata, '/API/admindata')
 api.add_resource(ChangeEnable, '/API/change_enable')
