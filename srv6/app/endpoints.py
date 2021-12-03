@@ -152,7 +152,7 @@ class ChangeEnable(Resource):
 
         #if user.is_enabled: user.is_enabled = False
         #else: user.is_enabled = True
-        user.is_enabled = operator.not_(user.is_enabled)
+        user.is_enabled = not user.is_enabled
         db.session.commit()
 
         try:

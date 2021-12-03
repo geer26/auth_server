@@ -8,7 +8,7 @@
 # JSON payload: {'username': <str>, 'password': <str>}
 # Returns: 200 or 400 with message
 #POST http://127.0.0.1:5001/API/addsu HTTP/1.1
-POST https://kecskecsecse.tk/API/addsu HTTP/1.1
+POST https://geer26.ddns.net/API/addsu HTTP/1.1
 content-type: application/json
 
 {
@@ -24,7 +24,7 @@ content-type: application/json
 # JSON payload: {'username': <str>, 'password': <str>, !'remember': <boolean>!}
 # Returns: 200 or 400 with message
 #POST http://127.0.0.1:5001/API/login HTTP/1.1
-POST https://kecskecsecse.tk/API/login HTTP/1.1
+POST https://geer26.ddns.net/API/login HTTP/1.1
 content-type: application/json
 
 {
@@ -41,7 +41,7 @@ content-type: application/json
 # JSON payload: {"username": <str>, "password": <str>, "email": <str>, "is_enabled": <boolean>, "is_superuser": <boolean>}
 # Returns: 200, 401 or 500 with message
 #POST http://127.0.0.1:5001/API/adduser HTTP/1.1
-POST https://kecskecsecse.tk/API/adduser HTTP/1.1
+POST https://geer26.ddns.net/API/adduser HTTP/1.1
 content-type: application/json
 
 {
@@ -252,7 +252,7 @@ content-type: application/json
 # Method: GET
 # Returns: 200, 401 or 500 with message
 #GET http://127.0.0.1:5001/API/admindata HTTP/1.1
-GET https://kecskecsecse.tk/API/admindata HTTP/1.1
+GET https://geer26.ddns.net/API/admindata HTTP/1.1
 
 
 ### Wipe database
@@ -269,21 +269,22 @@ GET http://127.0.0.1:5001/API/wipedatabase HTTP/1.1
 # Endpoint: /API/logout
 # Method: GET
 # Returns: 200, 400 with message
-GET http://127.0.0.1:5001/API/logout HTTP/1.1
+#GET http://127.0.0.1:5001/API/logout HTTP/1.1
+GET https://geer26.ddns.net/API/logout HTTP/1.1
 
 
 ### Healthcheck
 # provides useful information - UNDER CONSTRUCTION!
 # Endpoint: /API/healthcheck
-#GET http://127.0.0.1:5001/healthcheck HTTP/1.1
-GET https://kecskecsecse.tk/healthcheck HTTP/1.1
+GET http://127.0.0.1:5001/API/healthcheck HTTP/1.1
+#GET https://geer26.ddns.net/API/healthcheck HTTP/1.1
 
 
 ### Read current log
 # Method: GET
 # Returns: 200 and content of the current log, OR 401 or 500
 #GET http://127.0.0.1:5001/API/readlog HTTP/1.1
-GET https://kecskecsecse.tk/API/readlog HTTP/1.1
+GET https://geer26.ddns.net//API/readlog HTTP/1.1
 
 
 ### Download log archive - UNDER CONSTRUCTION!
@@ -299,7 +300,7 @@ GET http://127.0.0.1:5001/API/downloadlog HTTP/1.1
 # Method: GET
 # Param: role : admin/user/client
 # Returns: true, 200 or false, 401, 400, 500
-GET http://127.0.0.1:5001/API/auth?role=client
+GET https://geer26.ddns.net/API/auth?role=admin
 
 
 ### Login client
