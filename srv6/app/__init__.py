@@ -19,7 +19,7 @@ app.config.from_object(Config)
 api = Api(app)
 
 
-CORS(app, resources={r"/API/*": {"origins": "*"}})
+CORS(app, resources={r"/API/*": {"origins": "*"}}, support_credentials=True)
 
 
 db = SQLAlchemy(app)

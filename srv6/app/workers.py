@@ -100,12 +100,10 @@ def add_user(data):
 
 def get_admindata():
 
-    print('mifasz???')
     data = {}
 
     data['users'] = []
     for user in Users.query.all():
-        print('HERE???')
         print(f'USERDATA: {user.get_self_json_enc()}')
         data['users'].append(user.get_self_json_enc())
 
