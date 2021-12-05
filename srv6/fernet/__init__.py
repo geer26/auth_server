@@ -19,10 +19,11 @@ class Secret():
 
     def load(self, encoded):
 
-        print(f'Try to encode: {encoded}')
+        print(f'Try to encode: {encoded}, TYPE: {type(encoded)}')
         #return self.fernet.decrypt(bytes(encoded, 'UTF-8')).decode(encoding='utf-8')
-        #return self.fernet.decrypt(bytes(encoded)).decode(encoding='utf-8')
-        return self.fernet.decrypt(bytes(encoded))
+        return self.fernet.decrypt(bytes(encoded)).decode(encoding='utf-8')
+        #return self.fernet.decrypt(bytes(encoded))
+        #return self.fernet.decrypt(encoded)
 
 
     def new_fernet(self, secret=None, f=None):
