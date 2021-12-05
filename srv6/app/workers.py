@@ -104,7 +104,6 @@ def get_admindata():
 
     data['users'] = []
     for user in Users.query.all():
-        print(f'USERDATA: {user.get_self_json_enc()}')
         data['users'].append(user.get_self_json_enc())
 
     data['testbatteries'] = []
@@ -128,7 +127,6 @@ def get_admindata():
         data['tokens'].append(token.get_self_json())
 
     d = json.dumps(data, ensure_ascii=False)
-    print(f'DATA TO RETURN: {d}')
     return d
 
 

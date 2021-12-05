@@ -59,8 +59,6 @@ class Users(UserMixin, db.Model):
         }
 
     def get_self_json_enc(self):
-        print('Gets heree?')
-        print(str(secret.load(self.email)))
         return {
             'id': self.id,
             'username': self.username,

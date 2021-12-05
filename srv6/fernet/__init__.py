@@ -14,17 +14,11 @@ class Secret():
 
 
     def dump(self, plain):
-        return self.fernet.encrypt(str(plain).encode())
+        return self.fernet.encrypt(str(plain).encode()).decode(encoding="utf-8")
 
 
     def load(self, encoded):
-
-        print(f'Try to encode: {encoded}, TYPE: {type(encoded)}')
-        #return self.fernet.decrypt(bytes(encoded, 'UTF-8')).decode(encoding='utf-8')
-        return self.fernet.decrypt(bytes(encoded)).decode(encoding='utf-8')
-        #return self.fernet.decrypt(bytes(encoded))
-        #return self.fernet.decrypt(encoded)
-
+        return self.fernet.decrypt(bytes(encoded, 'UTF-8')).decode(encoding='utf-8')
 
     def new_fernet(self, secret=None, f=None):
         if not secret and f:
