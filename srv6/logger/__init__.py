@@ -106,7 +106,7 @@ class Logger():
         else:
             message = {
                 'type': self.log_type[type],
-                #'timestamp': f'{datetime.now().timestamp()}',
+                'timestamp': f'{datetime.now().timestamp()}',
                 'datetime': f'{datetime.now().strftime("%Y.%m.%d-%H:%M:%S")}',
                 'executor': f'{username}',
                 'event': f'{log_text}',
